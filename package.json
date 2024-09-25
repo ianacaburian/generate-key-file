@@ -10,7 +10,10 @@
     ],
     "scripts": {
         "build": "tsup",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "open:juce-generate-key-file": "cd test/juce-generate-key-file && ./script/open-xcode-macos-dev.sh",
+        "install:juce-generate-key-file": "cmake -S test/juce-generate-key-file -B test/juce-generate-key-file/build && cmake --build test/juce-generate-key-file/build && cmake --install test/juce-generate-key-file/build --prefix test/bin",
+        "clean:juce-generate-key-file": "cd test/juce-generate-key-file && ./script/clean-build.sh",
+        "test": "vitest"
     },
     "repository": {
         "type": "git",
@@ -36,6 +39,10 @@
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.0",
-        "typescript": "^5.6.2"
+        "typescript": "^5.6.2",
+        "vitest": "^2.1.1"
+    },
+    "dependencies": {
+        "fast-xml-parser": "^4.5.0"
     }
 }
