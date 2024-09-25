@@ -11,6 +11,8 @@ npm i @ianacaburian/generate-key-file
 # Usage
 
 ```
+import { generateKeyFile } from '@ianacaburian/generate-key-file'
+
 const keyFileContent = generateKeyFile({
     userName: 'Ian',
     userEmail: 'ian@email.com',
