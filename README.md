@@ -28,19 +28,21 @@ const keyFileContent = generateKeyFile({
    installed:
 
 ```
-
-npm run install:juce-generate-key-file
-
+npm run install:test/console
 ```
 
-2. Then, start the test server to run the tests:
+2. Then, start the test server to run the tests. Set "FC_NUM_RUMS" to specify
+   how many times to run each property based test (default=1000000).
 
 ```
-
-npm run test
-
+FC_NUM_RUNS=1000000 npm run test // Runs each property based test 1 million times.
 ```
 
-```
+# Development
 
+The following scripts are available for development:
+
+```
+npm run clean:test/console  # Clean test/console build dir.
+npm run open:test/console   # Open test/console project in Xcode.
 ```

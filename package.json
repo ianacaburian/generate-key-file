@@ -9,10 +9,11 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsup",
-        "open:juce-generate-key-file": "cd test/juce-generate-key-file && ./script/open-xcode-macos-dev.sh",
-        "install:juce-generate-key-file": "cmake -S test/juce-generate-key-file -B test/juce-generate-key-file/build && cmake --build test/juce-generate-key-file/build && cmake --install test/juce-generate-key-file/build --prefix test/bin",
-        "clean:juce-generate-key-file": "cd test/juce-generate-key-file && ./script/clean-build.sh",
+        "build": "tsup && eslint src",
+        "lint": "eslint src",
+        "open:test/console": "cd test/console && ./script/open-xcode-macos-dev.sh",
+        "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test/bin",
+        "clean:test/console": "cd test/console && ./script/clean-build.sh",
         "test": "vitest"
     },
     "repository": {
@@ -31,15 +32,19 @@
     },
     "homepage": "https://github.com/ianacaburian/generate-key-file#readme",
     "devDependencies": {
+        "@eslint/js": "^9.11.1",
         "@typescript-eslint/eslint-plugin": "^8.7.0",
         "@typescript-eslint/parser": "^8.7.0",
         "eslint": "^9.11.1",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.2.1",
+        "fast-check": "^3.22.0",
+        "globals": "^15.9.0",
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.0",
-        "typescript": "^5.6.2",
+        "typescript": "5.5.4",
+        "typescript-eslint": "^8.7.0",
         "vitest": "^2.1.1"
     },
     "dependencies": {
