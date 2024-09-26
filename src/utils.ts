@@ -60,3 +60,13 @@ export const createKeyFileComment = (
     `Email: ${userEmail}\n` +
     `Machine numbers: ${machineNumbers}\n` +
     `Created: ${date}`
+
+export const loadBigintFromUTF8 = (input: string): bigint => {
+    const data = new TextEncoder().encode(input) as Uint8Array
+    let s = ''
+    for (let i = data.length - 1; i >= 0; i--) {
+        s += data[i].toString(16)
+    }
+    const result = BigInt(s ? `0x${s}` : '')
+    return result
+}

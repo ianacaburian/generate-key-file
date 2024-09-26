@@ -7,10 +7,14 @@ import path from 'path'
 import {
     createKeyFileComment,
     createKeyFileContentSingleLine,
-    dateString
+    dateString,
+    loadBigintFromUTF8
 } from './utils'
 
-const TEST_BIN_DIR = path.join(__dirname, '..', 'test', 'bin')
+const execTestBin = (bin: string, input: string): string =>
+    execSync(`${path.join(__dirname, '..', 'test', 'bin', bin)} "${input}"`, {
+        encoding: 'utf-8'
+    }).trim()
 
 describe('utils', () => {
     let test = 'createKeyFileContentSingleLine'
@@ -63,16 +67,30 @@ describe('utils', () => {
     describe(test, () => {
         it('should load a bigint from a UTF-8 string as juce does', () => {
             console.log(`Testing ${test}...`)
-            const input = '0123'
-            const expected = '33323130'
-            const juce = path.join(TEST_BIN_DIR, 'load-big-integer-from-utf8')
+            const input = `0123`
             const result = {
-                fromJuce: execSync(`${juce} "${input}"`, {
-                    encoding: 'utf-8'
-                }).trim()
+                fromUtils: loadBigintFromUTF8(input).toString(16),
+                fromJuce: execTestBin('load-big-integer-from-utf8', input)
             }
-            console.log({ result })
-            expect(result.fromJuce).toBe(expected)
+            console.log({ input, result })
+            expect(result.fromUtils).toBe(result.fromJuce)
+
+            fc.assert(
+                fc.property(fc.stringMatching(/^[^"\\`$]*$/), input => {
+                    const result = {
+                        fromJuce: execTestBin(
+                            'load-big-integer-from-utf8',
+                            input
+                        ),
+                        fromUtils: loadBigintFromUTF8(input).toString(16)
+                    }
+                    console.log({ input, result })
+                    return result.fromUtils === result.fromJuce
+                }),
+                {
+                    numRuns: 100
+                }
+            )
         })
     })
 })
