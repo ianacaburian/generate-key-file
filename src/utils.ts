@@ -1,9 +1,10 @@
 import { XMLBuilder } from 'fast-xml-parser'
 
-const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
+export const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
 
 export const dateString = {
     inHexMs: (date: Date): string => {
+        // Ports juce::String::toHexString (juce::Time::getCurrentTime().toMilliseconds())
         return date.getTime().toString(16)
     },
     inFormattedComment: (date: Date): string => {
@@ -45,7 +46,7 @@ export const createKeyFileContentSingleLine = (
             '@_date': date
         }
     }
-    return `${XML_DECLARATION} ${builder.build(xml)}`.trim()
+    return [XML_DECLARATION, builder.build(xml).trim()].join(' ')
 }
 
 export const createKeyFileComment = (
@@ -53,20 +54,21 @@ export const createKeyFileComment = (
     userEmail: string,
     userName: string,
     machineNumbers: string,
-    date: string = dateString.inFormattedComment(new Date())
+    created: string = dateString.inFormattedComment(new Date())
 ): string =>
     `Keyfile for ${appName}\n` +
     `${userName ? `User: ${userName}\n` : ''}` +
     `Email: ${userEmail}\n` +
     `Machine numbers: ${machineNumbers}\n` +
-    `Created: ${date}`
+    `Created: ${created}`
 
-export const loadBigintFromUTF8 = (input: string): bigint => {
-    const data = new TextEncoder().encode(input) as Uint8Array
-    let s = ''
-    for (let i = data.length - 1; i >= 0; i--) {
-        s += data[i].toString(16)
-    }
-    const result = BigInt(s ? `0x${s}` : '')
-    return result
-}
+export const loadBigintFromUTF8 = (input: string): bigint =>
+    BigInt(
+        !input
+            ? ''
+            : '0x' +
+                  Array.from(new TextEncoder().encode(input))
+                      .reverse()
+                      .map(b => b.toString(16))
+                      .join('')
+    )

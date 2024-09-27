@@ -31,11 +31,17 @@ const keyFileContent = generateKeyFile({
 npm run install:test/console
 ```
 
-2. Then, start the test server to run the tests. Set "FC_NUM_RUMS" to specify
-   how many times to run each property based test (default=1000000).
+2. Then, start the test server to run the tests.
 
 ```
-FC_NUM_RUNS=1000000 npm run test // Runs each property based test 1 million times.
+npm run test
+```
+
+Optional: Set "FC_NUM_RUMS" to specify how many times to run each fc
+(fast-check) test (default=100).
+
+```
+FC_NUM_RUNS=1000 npm run test // Runs each fc test 1000 times.
 ```
 
 # Development

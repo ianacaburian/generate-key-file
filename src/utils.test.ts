@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
 import fc from 'fast-check'
-
 import { execSync } from 'child_process'
 import path from 'path'
 
@@ -12,7 +11,8 @@ import {
 } from './utils'
 
 const execTestBin = (bin: string, input: string): string =>
-    execSync(`${path.join(__dirname, '..', 'test', 'bin', bin)} "${input}"`, {
+    execSync(path.join(__dirname, '..', 'test', 'bin', bin), {
+        input,
         encoding: 'utf-8'
     }).trim()
 
@@ -65,30 +65,27 @@ describe('utils', () => {
 
     test = 'loadBigintFromUTF8'
     describe(test, () => {
-        it('should load a bigint from a UTF-8 string as juce does', () => {
+        it('should load a bigint from a UTF8 string as juce does', () => {
             console.log(`Testing ${test}...`)
-            const input = `0123`
-            const result = {
-                fromUtils: loadBigintFromUTF8(input).toString(16),
-                fromJuce: execTestBin('load-big-integer-from-utf8', input)
-            }
-            console.log({ input, result })
-            expect(result.fromUtils).toBe(result.fromJuce)
-
+            const toResult = (input: string) => ({
+                fromJuce: execTestBin('load-big-integer-from-utf8', input),
+                fromUtil: loadBigintFromUTF8(input).toString(16)
+            })
+            const base = '0123'
+            let result = toResult(base)
+            console.log({ base, result })
+            expect(result.fromUtil).toBe(result.fromJuce)
             fc.assert(
-                fc.property(fc.stringMatching(/^[^"\\`$]*$/), input => {
-                    const result = {
-                        fromJuce: execTestBin(
-                            'load-big-integer-from-utf8',
-                            input
-                        ),
-                        fromUtils: loadBigintFromUTF8(input).toString(16)
+                fc.property(
+                    fc.string({ minLength: 100, maxLength: 3000 }),
+                    input => {
+                        result = toResult(input)
+                        console.log({ input, result })
+                        return result.fromUtil === result.fromJuce
                     }
-                    console.log({ input, result })
-                    return result.fromUtils === result.fromJuce
-                }),
+                ),
                 {
-                    numRuns: 100
+                    numRuns: 1000
                 }
             )
         })

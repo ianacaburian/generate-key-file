@@ -4,20 +4,16 @@ static void
 loadBigIntegerFromUTF8(
     juce::BigInteger &val, juce::String const &input
 ) noexcept {
-    // Taken from juce::KeyFileUtils::encryptXML() (juce_OnlineUnlockStatus.cpp)
-    using namespace juce;
-    MemoryOutputStream text;
+    // Taken from juce::KeyFileUtils::encryptXML() 
+    juce::MemoryOutputStream text;
     text << input;
     val.loadFromMemoryBlock(text.getMemoryBlock());
 }
 
 int
-main(int argc, char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "Please provide a string argument." << std::endl;
-        return 1;
-    }
-    auto const input = argv[1];
+main() {
+    auto input = std::string{};
+    std::getline(std::cin, input);
 
     auto b = juce::BigInteger{};
     loadBigIntegerFromUTF8(b, input);
