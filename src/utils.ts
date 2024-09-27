@@ -62,13 +62,11 @@ export const createKeyFileComment = (
     `Machine numbers: ${machineNumbers}\n` +
     `Created: ${created}`
 
-export const loadBigintFromUTF8 = (input: string): bigint =>
-    BigInt(
-        !input
-            ? ''
-            : '0x' +
-                  Array.from(new TextEncoder().encode(input))
-                      .reverse()
-                      .map(b => b.toString(16))
-                      .join('')
-    )
+export const loadBigintFromUTF8 = (input: string): bigint => {
+    const buffer = Buffer.from(input, 'utf8')
+    let result = 0n
+    for (let i = buffer.length - 1; i >= 0; i--) {
+        result = (result << 8n) | BigInt(buffer[i])
+    }
+    return result
+}
