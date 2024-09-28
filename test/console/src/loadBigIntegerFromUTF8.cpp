@@ -15,9 +15,9 @@ main() {
     auto input = std::string{};
     std::getline(std::cin, input);
 
-    auto b = juce::BigInteger{};
-    loadBigIntegerFromUTF8(b, input);
-    auto const hex = b.toString(16);
+    auto val = juce::BigInteger{};
+    loadBigIntegerFromUTF8(val, input);
+    auto const hex = val.toString(16);
 
     auto const output = hex.toStdString();
     std::cout << output << std::endl;

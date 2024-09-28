@@ -8,13 +8,21 @@ import {
     createKeyFileComment,
     createKeyFileContentLine,
     dateString,
+    encryptBigint,
     loadBigintFromUTF8
 } from './utils'
 import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams,
-    createKeyFileContentLineParamsValidator
+    createKeyFileContentLineParamsValidator,
+    EncryptableBigint,
+    encryptableBigintValidator,
+    EncryptBigintParams,
+    encryptBigintParamsValidator,
+    RSAKeyComponents,
+    rsaKeyComponentsValidator
 } from './types'
+import { z } from 'zod'
 
 const execTestBin = (bin: string, input: string): string =>
     execSync(path.join(__dirname, '..', 'test', 'bin', bin), {
@@ -23,17 +31,16 @@ const execTestBin = (bin: string, input: string): string =>
     }).trim()
 
 describe('utils', () => {
-    let test = 'createKeyFileContentLine and its validator'
+    let test = 'createKeyFileContentLine and its params validator'
     describe(test, () => {
         it('should create key file content on a single line as juce does', () => {
             console.log(`Testing ${test}...`)
             const toResult = (params: CreateKeyFileContentLineParams) => {
                 const date = dateString.inHexMs(new Date())
-                const input = JSON.stringify({ ...params, date })
                 return {
                     fromJuce: execTestBin(
                         'create-key-file-content-line',
-                        input
+                        JSON.stringify({ ...params, date })
                     ),
                     fromUtil: createKeyFileContentLine(params, date)
                 }
@@ -44,8 +51,8 @@ describe('utils', () => {
                 `"userName":"",` +
                 `"machineNumbers":"\\"",` +
                 `"machineNumbersAttributeName":"mach"}`
+            // baseCase is parsed from string for dx with counterexamples.
             const baseCase = JSON.parse(baseString)
-            // Parsing baseCase from baseString for dx with counterexamples.
             const baseResult = toResult(baseCase)
             console.log({ baseCase, baseResult })
             expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
@@ -60,7 +67,7 @@ describe('utils', () => {
                     return !parse.success || result.fromUtil === result.fromJuce
                 }),
                 {
-                    numRuns: 0
+                    numRuns: 10
                 }
             )
         })
@@ -116,6 +123,39 @@ describe('utils', () => {
                     numRuns: 10
                 }
             )
+        })
+    })
+
+    test = `encryptBigint and its params' validators`
+    describe(test, () => {
+        it('should encrypt a bigint with an RSA private key as juce does', () => {
+            console.log(`Testing ${test}...`)
+            const toResult = (paramsString: string) => ({
+                fromJuce: execTestBin('encrypt-big-integer', paramsString),
+                fromUtil: encryptBigint(
+                    JSON.parse(paramsString, (key, value) => {
+                        return key === 'val' ? BigInt(`0x${value}`) : value
+                    })
+                )
+            })
+            const baseCase = `{"privateKey":"3233,2753","val":"45"}`
+            const baseResult = toResult(baseCase)
+            console.log({ baseCase, baseResult })
+            expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
+            // const encryptBigintParamsArbitrary = ZodFastCheck().inputOf(
+            //     encryptBigintParamsValidator
+            // )
+            // fc.assert(
+            //     fc.property(encryptBigintParamsArbitrary, input => {
+            //         const result = toResult(input)
+            //         console.log({ input, result })
+            //         const parse = encryptBigintParamsValidator.safeParse(input)
+            //         return !parse.success || result.fromUtil === result.fromJuce
+            //     }),
+            //     {
+            //         numRuns: 0
+            //     }
+            // )
         })
     })
 })

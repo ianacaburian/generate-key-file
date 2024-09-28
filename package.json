@@ -23,8 +23,10 @@
         "url": "git+https://github.com/ianacaburian/generate-key-file.git"
     },
     "keywords": [
-        "key-file",
+        "auth",
+        "cryptography",
         "juce",
+        "keyfile",
         "rsa"
     ],
     "author": "ianacaburian",

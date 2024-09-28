@@ -1,4 +1,4 @@
-#include <juce_product_unlocking/juce_product_unlocking.h>
+#include <juce_core/juce_core.h>
 
 static auto
 createKeyFileContent(
@@ -29,13 +29,13 @@ int
 main() {
     auto input = std::string{};
     std::getline(std::cin, input);
-
     auto const  data   = juce::JSON::parse(input);
     auto const *params = data.getDynamicObject();
     if (! params) {
         std::cout << "Bad input!" << std::endl;
         return 1;
     }
+
     auto const content = createKeyFileContent(
         params->getProperty("appName"), params->getProperty("userEmail"),
         params->getProperty("userName"), params->getProperty("machineNumbers"),

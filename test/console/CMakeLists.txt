@@ -21,7 +21,7 @@ target_sources(${TARGET_CREATE_KEY_FILE_CONTENT_LINE}
 )
 target_link_libraries(${TARGET_CREATE_KEY_FILE_CONTENT_LINE}
     PRIVATE
-    juce::juce_product_unlocking
+    juce::juce_core
 )
 set_target_properties(${TARGET_CREATE_KEY_FILE_CONTENT_LINE}
     PROPERTIES OUTPUT_NAME "create-key-file-content-line"
@@ -42,4 +42,21 @@ target_link_libraries(${TARGET_LOAD_BIG_INTEGER_FROM_UTF8}
 )
 set_target_properties(${TARGET_LOAD_BIG_INTEGER_FROM_UTF8}
     PROPERTIES OUTPUT_NAME "load-big-integer-from-utf8"
+)
+
+# encrypt-big-integer
+set(TARGET_ENCRYPT_BIG_INTEGER
+    console_encrypt_big_integer
+)
+console_config_target(${TARGET_ENCRYPT_BIG_INTEGER})
+target_sources(${TARGET_ENCRYPT_BIG_INTEGER}
+    PRIVATE
+    src/encryptBigInteger.cpp
+)
+target_link_libraries(${TARGET_ENCRYPT_BIG_INTEGER}
+    PRIVATE
+    juce::juce_cryptography
+)
+set_target_properties(${TARGET_ENCRYPT_BIG_INTEGER}
+    PROPERTIES OUTPUT_NAME "encrypt-big-integer"
 )
