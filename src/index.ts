@@ -1,2 +1,5 @@
 export * from './generateKeyFile'
-export * from './types'
+export {
+    type GenerateKeyFileParams,
+    type GenerateExpiringKeyFileParams
+} from './types'

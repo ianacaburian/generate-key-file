@@ -4,7 +4,7 @@ static void
 loadBigIntegerFromUTF8(
     juce::BigInteger &val, juce::String const &input
 ) noexcept {
-    // Taken from juce::KeyFileUtils::encryptXML() 
+    // Taken from juce::KeyFileUtils::encryptXML()
     juce::MemoryOutputStream text;
     text << input;
     val.loadFromMemoryBlock(text.getMemoryBlock());

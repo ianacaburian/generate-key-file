@@ -1,7 +1,8 @@
 {
     "name": "@ianacaburian/generate-key-file",
-    "version": "0.0.4",
-    "description": "Provides juce_KeyGeneration::generateKeyFile() for javascript.",
+    "version": "0.0.5",
+    "description": "Ports juce_KeyGeneration::generateKeyFile() to node.",
+    "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -9,11 +10,12 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsup && eslint src",
+        "clean": "rm -rf dist",
         "lint": "eslint src",
+        "clean:test/console": "cd test/console && ./script/clean-build.sh",
         "open:test/console": "cd test/console && ./script/open-xcode-macos-dev.sh",
         "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test/bin",
-        "clean:test/console": "cd test/console && ./script/clean-build.sh",
+        "build": "npm run lint && npm run install:test/console && tsup",
         "test": "vitest"
     },
     "repository": {
@@ -46,10 +48,10 @@
         "typescript": "5.5.4",
         "typescript-eslint": "^8.7.0",
         "vitest": "^2.1.1",
-        "zod": "^3.23.8",
         "zod-fast-check": "^0.10.1"
     },
     "dependencies": {
-        "fast-xml-parser": "^4.5.0"
+        "fast-xml-parser": "^4.5.0",
+        "zod": "^3.23.8"
     }
 }

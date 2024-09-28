@@ -1,6 +1,43 @@
 import { XMLBuilder } from 'fast-xml-parser'
+import {
+    CreateKeyFileCommentParams,
+    CreateKeyFileContentLineParams
+} from 'types'
 
 export const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
+
+export const legalXmlCharRegex =
+    // Ports juce::XmlOutputFunctions::LegalCharLookupTable
+    /^[a-zA-Z0-9 .,;:\-()_+=?!$#@[\]/|*%~{}'\\]$/
+
+export const xmlAttributeCharProcessor = (char: string): string =>
+    // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
+    char.length !== 1
+        ? ''
+        : legalXmlCharRegex.test(char)
+          ? char
+          : char === '&'
+            ? '&amp;'
+            : char === '"'
+              ? '&quot;'
+              : char === '>'
+                ? '&gt;'
+                : char === '<'
+                  ? '&lt;'
+                  : `&#${char.charCodeAt(0)};`
+
+export const xmlAttributeValueProcessor = (value: unknown): string =>
+    // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
+    typeof value !== 'string'
+        ? ''
+        : value.split('').map(xmlAttributeCharProcessor).join('')
+
+export const xmlBuilder = new XMLBuilder({
+    ignoreAttributes: false,
+    suppressEmptyNode: true,
+    processEntities: false, // Disabled since it doesn't mimic juce perfectly
+    attributeValueProcessor: (_, value) => xmlAttributeValueProcessor(value)
+})
 
 export const dateString = {
     inHexMs: (date: Date): string => {
@@ -8,10 +45,10 @@ export const dateString = {
         return date.getTime().toString(16)
     },
     inFormattedComment: (date: Date): string => {
-        // Ports `juce::Time::getCurrentTime().toString (true, true)`
+        // Ports juce::Time::getCurrentTime().toString (true, true)
         // prettier-ignore
         const months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
         const day = date.getDate().toString().padStart(2, '0')
         const month = months[date.getMonth()]
         const year = date.getFullYear()
@@ -25,44 +62,38 @@ export const dateString = {
     }
 }
 
-export const createKeyFileContentSingleLine = (
-    appName: string,
-    userEmail: string,
-    userName: string,
-    machineNumbers: string,
+export const createKeyFileContentLine = (
+    params: CreateKeyFileContentLineParams,
     date: string = dateString.inHexMs(new Date())
 ): string => {
-    const builder = new XMLBuilder({
-        ignoreAttributes: false,
-        format: true,
-        suppressEmptyNode: true
-    })
+    // Ports juce::KeyFileUtils::createKeyFileContent
+    // and juce::KeyFileUtils::encryptXML
     const xml = {
         key: {
-            '@_user': userName,
-            '@_email': userEmail,
-            '@_mach': machineNumbers,
-            '@_app': appName,
-            '@_date': date
+            '@_user': params.userName,
+            '@_email': params.userEmail,
+            [`@_${params.machineNumbersAttributeName}`]: params.machineNumbers,
+            '@_app': params.appName,
+            '@_date': date // Does not affect key file decryption
         }
     }
-    return [XML_DECLARATION, builder.build(xml).trim()].join(' ')
+    return [XML_DECLARATION, xmlBuilder.build(xml).trim()].join(' ')
 }
 
 export const createKeyFileComment = (
-    appName: string,
-    userEmail: string,
-    userName: string,
-    machineNumbers: string,
+    params: CreateKeyFileCommentParams,
     created: string = dateString.inFormattedComment(new Date())
 ): string =>
-    `Keyfile for ${appName}\n` +
-    `${userName ? `User: ${userName}\n` : ''}` +
-    `Email: ${userEmail}\n` +
-    `Machine numbers: ${machineNumbers}\n` +
+    // Ports juce::KeyFileUtils::createKeyFileComment
+    // Does not affect key file decryption
+    `Keyfile for ${params.appName}\n` +
+    `${params.userName ? `User: ${params.userName}\n` : ''}` +
+    `Email: ${params.userEmail}\n` +
+    `Machine numbers: ${params.machineNumbers}\n` +
     `Created: ${created}`
 
 export const loadBigintFromUTF8 = (input: string): bigint => {
+    // Ports juce::BigInteger::loadFromMemoryBlock()
     const buffer = Buffer.from(input, 'utf8')
     let result = 0n
     for (let i = buffer.length - 1; i >= 0; i--) {

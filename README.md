@@ -1,6 +1,6 @@
 # generate-key-file
 
-Provides juce_KeyGeneration::generateKeyFile() for javascript.
+Ports juce_KeyGeneration::generateKeyFile() to node.
 
 # Installation
 
@@ -22,33 +22,35 @@ const keyFileContent = generateKeyFile({
 })
 ```
 
-# Testing
+### `generateKeyFile(params: GenerateKeyFileParams) => string`
 
-1. To test against the juce implementation, test binaries must first be
-   installed:
-
-```
-npm run install:test/console
-```
-
-2. Then, start the test server to run the tests.
-
-```
-npm run test
-```
-
-Optional: Set "FC_NUM_RUMS" to specify how many times to run each fc
-(fast-check) test (default=100).
-
-```
-FC_NUM_RUNS=1000 npm run test // Runs each fc test 1000 times.
-```
+-   Returns the string value to be used as the <key> value in the XML response
+    for decryption by the client.
+-   Throws:
+    -   ZodError for invalid params -- see
+        [zod](https://github.com/colinhacks/zod).
 
 # Development
 
-The following scripts are available for development:
+```
+npm run clean                   # Clean the dist dir.
+npm run lint                    # Lint the src dir.
+npm run build                   # Lint, install tests, and build package.
+```
+
+## Testing
 
 ```
-npm run clean:test/console  # Clean test/console build dir.
-npm run open:test/console   # Open test/console project in Xcode.
+npm run test                    # Start vitest to run all tests.
+npm run clean:test/console      # Clean test/console build dir.
+npm run open:test/console       # Open test/console project in Xcode.
+npm run install:test/console    # Build and install the test/console bins.
+```
+
+Optional: Set "FC_NUM_RUMS" (default=100) to specify how many times to run each
+(randomly generated) propery-based test -- see
+[fast-check](https://github.com/dubzzz/fast-check/stargazers).
+
+```
+FC_NUM_RUNS=1000 npm run test   # Run each fc test 1000 times.
 ```
