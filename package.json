@@ -10,9 +10,9 @@
         "dist"
     ],
     "scripts": {
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist && npm run clean:test",
         "lint": "eslint src",
-        "clean:test/console": "cd test/console && ./script/clean-build.sh",
+        "clean:test": "rm -rf test/bin/* && cd test/console && ./script/clean-build.sh",
         "open:test/console": "cd test/console && ./script/open-xcode-macos-dev.sh",
         "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test/bin",
         "build": "npm run lint && npm run install:test/console && tsup",

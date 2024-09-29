@@ -2,13 +2,8 @@ import { XMLBuilder } from 'fast-xml-parser'
 import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams,
-    EncryptableBigint,
-    encryptableBigintValidator,
-    EncryptBigintParams,
-    RSAKeyComponents,
-    rsaKeyComponentsValidator
+    EncryptBigintParams
 } from 'types'
-import { Z } from 'vitest/dist/chunks/reporters.WnPwkmgA'
 
 export const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
 
@@ -119,24 +114,6 @@ export const loadBigintFromUTF8 = (input: string): bigint => {
     return result
 }
 
-const naiveModPow = (
-    base: bigint,
-    exponent: bigint,
-    modulus: bigint
-): bigint => {
-    if (modulus === 1n) return 0n
-
-    let result = 1n
-    base = base % modulus
-
-    while (exponent > 0n) {
-        result = (result * base) % modulus
-        exponent -= 1n
-    }
-
-    return result
-}
-
 export const encryptBigint = ({
     privateKey,
     val
@@ -144,18 +121,21 @@ export const encryptBigint = ({
     // Ports juce::RSAKey::RSAKey(), juce::RSAKey::applyToValue()
     // and juce::KeyFileUtils::encryptXML
     // Expected output depends on input validation by the caller
-    const [part1, part2] = privateKey.split(',').map(p => BigInt(`0x${p}`))
-    let result = 0n
-    let value = BigInt(val)
+    // const [part1, part2] = privateKey.split(',').map(p => BigInt(`0x${p}`))
+    // let result = 0n
+    // let value = BigInt(val)
 
-    while (value !== 0n) {
-        result *= part2
+    // while (value !== 0n) {
+    //     result *= part2
 
-        const remainder = value % part2
-        value = value / part2
+    //     let remainder = 0n
+    //     value.divideBy(part2, remainder)
 
-        result += naiveModPow(remainder, part1, part2)
-    }
+    //     remainder.exponentModulo(part1, part2)
 
-    return result.toString(16)
+    //     result += remainder
+    // }
+
+    // return result.toString(16)
+    return ''
 }

@@ -33,7 +33,7 @@ const keyFileContent = generateKeyFile({
 # Development
 
 ```
-npm run clean                   # Clean the dist dir.
+npm run clean                   # Clean dist and test builds (inc test bins).
 npm run lint                    # Lint the src dir.
 npm run build                   # Lint, install tests, and build package.
 ```
@@ -42,7 +42,7 @@ npm run build                   # Lint, install tests, and build package.
 
 ```
 npm run test                    # Start vitest to run all tests.
-npm run clean:test/console      # Clean test/console build dir.
+npm run clean:test              # Clean test build.
 npm run open:test/console       # Open test/console project in Xcode.
 npm run install:test/console    # Build and install the test/console bins.
 ```

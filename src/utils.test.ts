@@ -65,10 +65,7 @@ describe('utils', () => {
                     const parse =
                         createKeyFileContentLineParamsValidator.safeParse(input)
                     return !parse.success || result.fromUtil === result.fromJuce
-                }),
-                {
-                    numRuns: 10
-                }
+                })
             )
         })
     })
@@ -118,10 +115,7 @@ describe('utils', () => {
                         console.log({ input, result })
                         return result.fromUtil === result.fromJuce
                     }
-                ),
-                {
-                    numRuns: 10
-                }
+                )
             )
         })
     })

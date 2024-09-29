@@ -1,3 +1,5 @@
+import { JuceBigInteger } from './JuceBigInteger'
+export { JuceBigInteger }
 import { z } from 'zod'
 
 export const createKeyFileCommentParamsValidator = z.object({
@@ -26,9 +28,12 @@ export type CreateKeyFileContentLineParams = z.infer<
     typeof createKeyFileContentLineParamsValidator
 >
 
-export const rsaKeyComponentsValidator = z
-    .string()
-    .refine(x => x.split(',').every(p => p.trim().length % 2 === 0)) // Hex
+export const rsaKeyComponentsValidator = z.string().refine(
+    // Ports juce::RSAKey::RSAKey() and juce::RSAKey::applyToValue()
+    x =>
+        x.includes(',') &&
+        x.split(',').every(p => !JuceBigInteger.fromHex(p).isZero())
+)
 export type RSAKeyComponents = z.infer<typeof rsaKeyComponentsValidator>
 
 export const encryptableBigintValidator = z.bigint().refine(x => x > 0n)
