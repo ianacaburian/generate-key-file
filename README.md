@@ -1,4 +1,4 @@
-# generate-key-file
+# generate-key-file (Under Development)
 
 Ports juce_KeyGeneration::generateKeyFile() to node.
 
@@ -24,7 +24,7 @@ const keyFileContent = generateKeyFile({
 
 ### `generateKeyFile(params: GenerateKeyFileParams) => string`
 
--   Returns the string value to be used as the <key> value in the XML response
+-   Returns the <key> string value to be used in the XML response
     for decryption by the client.
 -   Throws:
     -   ZodError for invalid params -- see
@@ -50,7 +50,7 @@ npm run install:test/console    # Build and install the test/console bins.
 
 Optional: Set "FC_NUM_RUMS" (default=100) to specify how many times to run each
 (randomly generated) propery-based test -- see
-[fast-check](https://github.com/dubzzz/fast-check/stargazers).
+[fast-check](https://github.com/dubzzz/fast-check).
 
 ```
 FC_NUM_RUNS=1000 npm run test   # Run each fc test 1000 times.
