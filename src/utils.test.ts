@@ -1,34 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
-import { execSync } from 'child_process'
-import path from 'path'
 import { ZodFastCheck } from 'zod-fast-check'
 
 import {
     createKeyFileComment,
     createKeyFileContentLine,
     dateString,
-    encryptBigint,
+    execTestBin,
     loadBigintFromUTF8
 } from './utils'
 import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams,
-    createKeyFileContentLineParamsValidator,
-    EncryptableBigint,
-    encryptableBigintValidator,
-    EncryptBigintParams,
-    encryptBigintParamsValidator,
-    RSAKeyComponents,
-    rsaKeyComponentsValidator
+    createKeyFileContentLineParamsValidator
 } from './types'
-import { z } from 'zod'
-
-const execTestBin = (bin: string, input: string): string =>
-    execSync(path.join(__dirname, '..', 'test', 'bin', bin), {
-        input,
-        encoding: 'utf-8'
-    }).trim()
 
 describe('utils', () => {
     let test = 'createKeyFileContentLine and its params validator'
@@ -51,7 +36,6 @@ describe('utils', () => {
                 `"userName":"",` +
                 `"machineNumbers":"\\"",` +
                 `"machineNumbersAttributeName":"mach"}`
-            // baseCase is parsed from string for dx with counterexamples.
             const baseCase = JSON.parse(baseString)
             const baseResult = toResult(baseCase)
             console.log({ baseCase, baseResult })
@@ -117,39 +101,6 @@ describe('utils', () => {
                     }
                 )
             )
-        })
-    })
-
-    test = `encryptBigint and its params' validators`
-    describe(test, () => {
-        it('should encrypt a bigint with an RSA private key as juce does', () => {
-            console.log(`Testing ${test}...`)
-            const toResult = (paramsString: string) => ({
-                fromJuce: execTestBin('encrypt-big-integer', paramsString),
-                fromUtil: encryptBigint(
-                    JSON.parse(paramsString, (key, value) => {
-                        return key === 'val' ? BigInt(`0x${value}`) : value
-                    })
-                )
-            })
-            const baseCase = `{"privateKey":"3233,2753","val":"45"}`
-            const baseResult = toResult(baseCase)
-            console.log({ baseCase, baseResult })
-            expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
-            // const encryptBigintParamsArbitrary = ZodFastCheck().inputOf(
-            //     encryptBigintParamsValidator
-            // )
-            // fc.assert(
-            //     fc.property(encryptBigintParamsArbitrary, input => {
-            //         const result = toResult(input)
-            //         console.log({ input, result })
-            //         const parse = encryptBigintParamsValidator.safeParse(input)
-            //         return !parse.success || result.fromUtil === result.fromJuce
-            //     }),
-            //     {
-            //         numRuns: 0
-            //     }
-            // )
         })
     })
 })

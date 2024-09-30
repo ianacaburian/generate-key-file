@@ -1,3 +1,5 @@
+import { BigInteger as JSBN } from 'jsbn'
+
 export class JuceBigInteger {
     constructor(public value: bigint = 0n) {}
 
@@ -19,20 +21,16 @@ export class JuceBigInteger {
             this.value = 0n
             return
         }
+        // TODO divide with JSBN
         remainder.value = this.value % divisor.value
         this.value = this.value / divisor.value
     }
 
     exponentModulo(exponent: JuceBigInteger, modulus: JuceBigInteger): void {
-        // Implementation of exponentModulo method
-        // ... (skipped for brevity)
-        // if (modulus === 1n) return 0n
-        // let result = 1n
-        // base = base % modulus
-        // while (exponent > 0n) {
-        //     result = (result * base) % modulus
-        //     exponent -= 1n
-        // }
-        // return result
+        const b = new JSBN(this.toHex())
+        const e = new JSBN(exponent.toHex())
+        const m = new JSBN(modulus.toHex())
+        const em = b.modPow(e, m)
+        this.value = JuceBigInteger.fromHex(em.toString(16)).value
     }
 }

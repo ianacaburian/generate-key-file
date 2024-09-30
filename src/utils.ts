@@ -1,3 +1,5 @@
+import path from 'path'
+import { execSync } from 'child_process'
 import { XMLBuilder } from 'fast-xml-parser'
 import {
     CreateKeyFileCommentParams,
@@ -138,4 +140,16 @@ export const encryptBigint = ({
 
     // return result.toString(16)
     return ''
+}
+
+export const execTestBin = (bin: string, input: string): string => {
+    try {
+        return execSync(path.join(__dirname, '..', 'test', 'bin', bin), {
+            input,
+            encoding: 'utf-8'
+        }).trim()
+    } catch (error) {
+        console.error(`execSync "${bin}":`, error)
+        throw error
+    }
 }

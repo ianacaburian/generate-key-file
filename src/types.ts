@@ -1,5 +1,4 @@
 import { JuceBigInteger } from './JuceBigInteger'
-export { JuceBigInteger }
 import { z } from 'zod'
 
 export const createKeyFileCommentParamsValidator = z.object({

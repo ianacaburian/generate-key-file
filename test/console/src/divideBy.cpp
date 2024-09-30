@@ -19,7 +19,7 @@ divideBy(
     auto const quotientHex  = dividend.toString(16);
     auto const remainderHex = remainder.toString(16);
 
-    return std::tie(dividendHex, divisorHex, quotientHex, remainderHex);
+    return std::make_tuple(dividendHex, divisorHex, quotientHex, remainderHex);
 }
 
 int
@@ -32,7 +32,6 @@ main() {
         std::cout << "Bad input!" << std::endl;
         return 1;
     }
-
     auto const dividendHexParam = params->getProperty("dividendHex").toString();
     auto const divisorHexParam  = params->getProperty("divisorHex").toString();
 
