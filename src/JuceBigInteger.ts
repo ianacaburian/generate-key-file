@@ -12,25 +12,37 @@ export class JuceBigInteger {
         return this.value.toString(16)
     }
 
+    static fromJSBN(b: JSBN): JuceBigInteger {
+        return JuceBigInteger.fromHex(b.toString(16))
+    }
+
+    toJSBN(): JSBN {
+        return new JSBN(this.toHex(), 16)
+    }
+
     isZero(): boolean {
         return this.value === 0n
     }
 
     divideBy(divisor: JuceBigInteger, remainder: JuceBigInteger): void {
+        // Ports juce::BigInteger::divideBy()
         if (divisor.isZero()) {
             this.value = 0n
             return
         }
-        // TODO divide with JSBN
-        remainder.value = this.value % divisor.value
-        this.value = this.value / divisor.value
+        const b = this.toJSBN()
+        const d = divisor.toJSBN()
+        const [q, r] = b.divideAndRemainder(d)
+        this.value = JuceBigInteger.fromJSBN(q).value
+        remainder.value = JuceBigInteger.fromJSBN(r).value
     }
 
     exponentModulo(exponent: JuceBigInteger, modulus: JuceBigInteger): void {
-        const b = new JSBN(this.toHex())
-        const e = new JSBN(exponent.toHex())
-        const m = new JSBN(modulus.toHex())
+        // Ports juce::BigInteger::exponentModulo()
+        const b = this.toJSBN()
+        const e = exponent.toJSBN()
+        const m = modulus.toJSBN()
         const em = b.modPow(e, m)
-        this.value = JuceBigInteger.fromHex(em.toString(16)).value
+        this.value = JuceBigInteger.fromJSBN(em).value
     }
 }
