@@ -1,10 +1,7 @@
-import path from 'path'
-import { execSync } from 'child_process'
 import { XMLBuilder } from 'fast-xml-parser'
 import {
     CreateKeyFileCommentParams,
-    CreateKeyFileContentLineParams,
-    EncryptBigintParams
+    CreateKeyFileContentLineParams
 } from 'types'
 
 export const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
@@ -114,42 +111,4 @@ export const loadBigintFromUTF8 = (input: string): bigint => {
         result = (result << 8n) | BigInt(buffer[i])
     }
     return result
-}
-
-export const encryptBigint = ({
-    privateKey,
-    val
-}: EncryptBigintParams): string => {
-    // Ports juce::RSAKey::RSAKey(), juce::RSAKey::applyToValue()
-    // and juce::KeyFileUtils::encryptXML
-    // Expected output depends on input validation by the caller
-    // const [part1, part2] = privateKey.split(',').map(p => BigInt(`0x${p}`))
-    // let result = 0n
-    // let value = BigInt(val)
-
-    // while (value !== 0n) {
-    //     result *= part2
-
-    //     let remainder = 0n
-    //     value.divideBy(part2, remainder)
-
-    //     remainder.exponentModulo(part1, part2)
-
-    //     result += remainder
-    // }
-
-    // return result.toString(16)
-    return ''
-}
-
-export const execTestBin = (bin: string, input: string): string => {
-    try {
-        return execSync(path.join(__dirname, '..', 'test', 'bin', bin), {
-            input,
-            encoding: 'utf-8'
-        }).trim()
-    } catch (error) {
-        console.error(`execSync "${bin}":`, error)
-        throw error
-    }
 }

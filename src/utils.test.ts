@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
+import { execTestBin } from './test-utils'
 import { ZodFastCheck } from 'zod-fast-check'
 
 import {
     createKeyFileComment,
     createKeyFileContentLine,
     dateString,
-    execTestBin,
     loadBigintFromUTF8
 } from './utils'
 import {

@@ -3,8 +3,8 @@ include(cmake/ConfigTarget.cmake)
 include(cmake/CPM.cmake)
 CPMAddPackage(juce
     NAME juce
-    GIT_TAG 8a5bcdd9c2010dc3ed722d0422b061ae5de029aa
-    GITHUB_REPOSITORY ianacaburian/JUCE
+    GIT_TAG develop
+    GITHUB_REPOSITORY juce-framework/juce
     SYSTEM YES
     EXCLUDE_FROM_ALL YES
 )
@@ -46,11 +46,11 @@ set_target_properties(${TARGET_EXPONENT_MODULO}
     PROPERTIES OUTPUT_NAME "exponent-modulo"
 )
 
-# encrypt-big-integer
-set(TARGET_ENCRYPT_BIG_INT console_encrypt_big_integer)
-console_config_target(${TARGET_ENCRYPT_BIG_INT})
-target_sources(${TARGET_ENCRYPT_BIG_INT} PRIVATE src/encryptBigInteger.cpp)
-target_link_libraries(${TARGET_ENCRYPT_BIG_INT} PRIVATE juce::juce_cryptography)
-set_target_properties(${TARGET_ENCRYPT_BIG_INT}
-    PROPERTIES OUTPUT_NAME "encrypt-big-integer"
+# apply-to-value
+set(TARGET_APPLY_TO_VALUE console_apply_to_value)
+console_config_target(${TARGET_APPLY_TO_VALUE})
+target_sources(${TARGET_APPLY_TO_VALUE} PRIVATE src/applyToValue.cpp)
+target_link_libraries(${TARGET_APPLY_TO_VALUE} PRIVATE juce::juce_cryptography)
+set_target_properties(${TARGET_APPLY_TO_VALUE}
+    PROPERTIES OUTPUT_NAME "apply-to-value"
 )

@@ -38,10 +38,11 @@ main() {
     auto const baseHexParam     = params->getProperty("baseHex").toString();
     auto const exponentHexParam = params->getProperty("exponentHex").toString();
     auto const modulusHexParam  = params->getProperty("modulusHex").toString();
+    auto const countParam       = params->getProperty("count").toString();
 
     auto const [baseHex, exponentHex, modulusHex, exponentModuloHex] =
         exponentModulo(baseHexParam, exponentHexParam, modulusHexParam);
-        
+
     auto  output  = juce::var{new juce::DynamicObject{}};
     auto *context = output.getDynamicObject();
     context->setProperty("baseHexParam", baseHexParam);
@@ -51,6 +52,11 @@ main() {
     context->setProperty("exponentHex", exponentHex);
     context->setProperty("modulusHex", modulusHex);
     context->setProperty("exponentModuloHex", exponentModuloHex);
-    std::cout << juce::JSON::toString(output).toStdString() << std::endl;
+    auto const outputJson = juce::JSON::toString(output).toStdString();
+    if (countParam.isNotEmpty()) {
+        std::cerr << "\nCount: " << countParam.toStdString() << "\n"
+                  << outputJson << std::endl;
+    }
+    std::cout << outputJson << std::endl;
     return 0;
 }

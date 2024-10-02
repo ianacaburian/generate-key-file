@@ -1,13 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
+import { hexArbitrary, execTestBin } from './test-utils'
 import { JuceBigInteger } from './JuceBigInteger'
-import { execTestBin } from './utils'
-
-const hexArbitrary = fc.string({
-    unit: fc.constantFrom(...'0123456789abcdef'),
-    minLength: 300,
-    maxLength: 1000
-})
 
 describe('JuceBigInteger', () => {
     it('divideBy', ctx => {
@@ -60,9 +54,18 @@ describe('JuceBigInteger', () => {
             exponentHex: string
             modulusHex: string
         }
-        const toResult = (params: TestParams) => ({
+        const toResult = (
+            params: TestParams,
+            count: bigint | undefined = undefined
+        ) => ({
             fromJuce: JSON.parse(
-                execTestBin('exponent-modulo', JSON.stringify(params))
+                execTestBin(
+                    'exponent-modulo',
+                    JSON.stringify({
+                        ...params,
+                        count: count ? count.toString() : ''
+                    })
+                )
             ),
             fromUtil: (() => {
                 const base = JuceBigInteger.fromHex(params.baseHex)
