@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const createKeyFileCommentParamsValidator = z.object({
     appName: z.string().min(1),
     userEmail: z.string().min(1).email(),
-    userName: z.string(),
+    userName: z.string().min(1),
     machineNumbers: z.string().min(1)
 })
 export type CreateKeyFileCommentParams = z.infer<
@@ -34,15 +34,6 @@ export const rsaKeyComponentsValidator = z.string().refine(
         x.split(',').every(p => !JuceBigInteger.fromHex(p).isZero())
 )
 export type RSAKeyComponents = z.infer<typeof rsaKeyComponentsValidator>
-
-export const encryptableBigintValidator = z.bigint().refine(x => x > 0n)
-export type EncryptableBigint = z.infer<typeof encryptableBigintValidator>
-
-export const encryptBigintParamsValidator = z.object({
-    privateKey: rsaKeyComponentsValidator,
-    val: encryptableBigintValidator
-})
-export type EncryptBigintParams = z.infer<typeof encryptBigintParamsValidator>
 
 export const generateKeyFileParamsValidator =
     createKeyFileCommentParamsValidator.extend({

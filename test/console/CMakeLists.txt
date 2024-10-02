@@ -11,12 +11,39 @@ CPMAddPackage(juce
 project(console VERSION 0.0.1)
 
 # create-key-file-content-line
-set(TARGET_CREATE_KEY console_create_key_file_content_line)
-console_config_target(${TARGET_CREATE_KEY})
-target_sources(${TARGET_CREATE_KEY} PRIVATE src/createKeyFileContentLine.cpp)
-target_link_libraries(${TARGET_CREATE_KEY} PRIVATE juce::juce_core)
-set_target_properties(${TARGET_CREATE_KEY}
+set(TARGET_CREATE_LINE console_create_key_file_content_line)
+console_config_target(${TARGET_CREATE_LINE})
+target_sources(${TARGET_CREATE_LINE} PRIVATE src/createKeyFileContentLine.cpp)
+target_link_libraries(${TARGET_CREATE_LINE} PRIVATE juce::juce_core)
+set_target_properties(${TARGET_CREATE_LINE}
     PROPERTIES OUTPUT_NAME "create-key-file-content-line"
+)
+
+# create-key-file-comment
+set(TARGET_CREATE_COMMENT console_create_key_file_comment)
+console_config_target(${TARGET_CREATE_COMMENT})
+target_sources(${TARGET_CREATE_COMMENT} PRIVATE src/createKeyFileComment.cpp)
+target_link_libraries(${TARGET_CREATE_COMMENT} PRIVATE juce::juce_core)
+set_target_properties(${TARGET_CREATE_COMMENT}
+    PROPERTIES OUTPUT_NAME "create-key-file-comment"
+)
+
+# encrypt-xml-line
+set(TARGET_ENCRYPT_XML console_encrypt_xml_line)
+console_config_target(${TARGET_ENCRYPT_XML})
+target_sources(${TARGET_ENCRYPT_XML} PRIVATE src/encryptXMLLine.cpp)
+target_link_libraries(${TARGET_ENCRYPT_XML} PRIVATE juce::juce_cryptography)
+set_target_properties(${TARGET_ENCRYPT_XML}
+    PROPERTIES OUTPUT_NAME "encrypt-xml-line"
+)
+
+# create-key-file
+set(TARGET_CREATE_KEY_FILE console_create_key_file)
+console_config_target(${TARGET_CREATE_KEY_FILE})
+target_sources(${TARGET_CREATE_KEY_FILE} PRIVATE src/createKeyFile.cpp)
+target_link_libraries(${TARGET_CREATE_KEY_FILE} PRIVATE juce::juce_cryptography)
+set_target_properties(${TARGET_CREATE_KEY_FILE}
+    PROPERTIES OUTPUT_NAME "create-key-file"
 )
 
 # load-from-memory-block

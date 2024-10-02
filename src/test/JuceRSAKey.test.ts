@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
 import { hexArbitrary, execTestBin } from 'src/test/test-utils'
-import { JuceBigInteger } from '../juce/JuceBigInteger'
-import { JuceRSAKey } from '../juce/JuceRSAKey'
+import { JuceBigInteger } from 'src/juce/JuceBigInteger'
+import { JuceRSAKey } from 'src/juce/JuceRSAKey'
 
 describe('JuceRSAKey', () => {
     it('applyToValue', ctx => {

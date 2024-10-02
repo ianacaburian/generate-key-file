@@ -22,12 +22,12 @@ export class JuceBigInteger {
 
     static fromUTF8MemoryBlock(input: string): JuceBigInteger {
         // Ports juce::BigInteger::loadFromMemoryBlock()
-        const buffer = Buffer.from(input, 'utf8')
-        let result = 0n
-        for (let i = buffer.length - 1; i >= 0; i--) {
-            result = (result << 8n) | BigInt(buffer[i])
+        const u = Buffer.from(input, 'utf8')
+        const b = new JuceBigInteger()
+        for (let i = u.length - 1; i >= 0; i--) {
+            b.value = (b.value << 8n) | BigInt(u[i])
         }
-        return new JuceBigInteger(result)
+        return b
     }
 
     isZero(): boolean {

@@ -3,7 +3,6 @@ import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams
 } from 'src/types'
-import { JuceDateString } from 'src/juce/JuceDateString'
 import { JuceRSAKey } from './JuceRSAKey'
 import { JuceBigInteger } from './JuceBigInteger'
 
@@ -42,82 +41,82 @@ const xmlBuilder = new XMLBuilder({
     attributeValueProcessor: (_, value) => xmlAttributeValueProcessor(value)
 })
 
-export const createKeyFileContentLine = (
-    {
-        appName,
-        userEmail,
-        userName,
-        machineNumbers,
-        machineNumbersAttributeName
-    }: CreateKeyFileContentLineParams,
-    date: string,
-    expiryTime?: string
-): string => {
-    // Ports juce::KeyFileUtils::createKeyFileContent
-    // and juce::KeyFileUtils::encryptXML
-    const xml = {
-        key: {
-            '@_user': userName,
-            '@_email': userEmail,
-            [`@_${machineNumbersAttributeName}`]: machineNumbers,
-            '@_app': appName,
-            '@_date': date, // Does not affect key file decryption
-            ...(expiryTime ? { '@_expiryTime': expiryTime } : {})
+export class JuceKeyFileUtils {
+    static createKeyFileContentLine(
+        {
+            appName,
+            userEmail,
+            userName,
+            machineNumbers,
+            machineNumbersAttributeName
+        }: CreateKeyFileContentLineParams,
+        date: string,
+        expiryTime?: string
+    ): string {
+        // Ports juce::KeyFileUtils::createKeyFileContent
+        // and juce::KeyFileUtils::encryptXML
+        const xml = {
+            key: {
+                '@_user': userName,
+                '@_email': userEmail,
+                [`@_${machineNumbersAttributeName}`]: machineNumbers,
+                '@_app': appName,
+                '@_date': date, // Does not affect key file decryption
+                ...(expiryTime ? { '@_expiryTime': expiryTime } : {})
+            }
         }
-    }
-    return [XML_DECLARATION, xmlBuilder.build(xml).trim()].join(' ')
-}
-
-export const createKeyFileComment = (
-    {
-        appName,
-        userEmail,
-        userName,
-        machineNumbers
-    }: CreateKeyFileCommentParams,
-    created: string,
-    expiryTime?: string
-): string =>
-    // Ports juce::KeyFileUtils::createKeyFileComment
-    `Keyfile for ${appName}\n` +
-    `${userName ? `User: ${userName}\n` : ''}` +
-    `Email: ${userEmail}\n` +
-    `Machine numbers: ${machineNumbers}\n` +
-    `Created: ${created}` +
-    expiryTime
-        ? `\n` + `Expires: ${expiryTime}`
-        : ''
-
-export const encryptXMLLine = (
-    xmlLine: string,
-    privateKey: JuceRSAKey
-): string => {
-    // Ports juce::KeyFileUtils::encryptXML
-    const val = JuceBigInteger.fromUTF8MemoryBlock(xmlLine)
-    privateKey.applyToValue(val)
-    return val.toHex()
-}
-
-export const createKeyFile = (
-    comment: string,
-    xmlLine: string,
-    rsaPrivateKey: JuceRSAKey
-): string => {
-    // Ports juce::KeyFileUtils::createKeyFile
-    let asHex = '#' + encryptXMLLine(xmlLine, rsaPrivateKey)
-
-    const lines: string[] = []
-    lines.push(comment)
-    lines.push('')
-
-    console.log({ comment, xmlLine })
-    const charsPerLine = 70
-    while (asHex.length > 0) {
-        lines.push(asHex.substring(0, charsPerLine))
-        asHex = asHex.substring(charsPerLine)
+        return [XML_DECLARATION, xmlBuilder.build(xml).trim()].join(' ')
     }
 
-    lines.push('')
+    static createKeyFileComment(
+        {
+            appName,
+            userEmail,
+            userName,
+            machineNumbers
+        }: CreateKeyFileCommentParams,
+        created: string,
+        expiryTime?: string
+    ): string {
+        // Ports juce::KeyFileUtils::createKeyFileComment
+        return (
+            `Keyfile for ${appName}\r\n` +
+            `${userName ? `User: ${userName}\r\n` : ''}` +
+            `Email: ${userEmail}\r\n` +
+            `Machine numbers: ${machineNumbers}\r\n` +
+            `Created: ${created}` +
+            (expiryTime ? `\r\nExpires: ${expiryTime}` : '')
+        )
+    }
 
-    return lines.join('\r\n')
+    static encryptXMLLine(xmlLine: string, privateKey: JuceRSAKey): string {
+        // Ports juce::KeyFileUtils::encryptXML
+        const val = JuceBigInteger.fromUTF8MemoryBlock(xmlLine)
+        privateKey.applyToValue(val)
+        return val.toHex()
+    }
+
+    static createKeyFile(
+        comment: string,
+        xmlLine: string,
+        rsaPrivateKey: JuceRSAKey
+    ): string {
+        // Ports juce::KeyFileUtils::createKeyFile
+        let asHex = '#' + this.encryptXMLLine(xmlLine, rsaPrivateKey)
+
+        const lines: string[] = []
+        lines.push(comment)
+        lines.push('')
+
+        console.log({ comment, xmlLine })
+        const charsPerLine = 70
+        while (asHex.length > 0) {
+            lines.push(asHex.substring(0, charsPerLine))
+            asHex = asHex.substring(charsPerLine)
+        }
+
+        lines.push('')
+
+        return lines.join('\r\n')
+    }
 }

@@ -1,9 +1,5 @@
 import { GenerateExpiringKeyFileParams, GenerateKeyFileParams } from 'src/types'
-import {
-    createKeyFileContentLine,
-    createKeyFileComment,
-    createKeyFile
-} from 'src/juce/JuceKeyFileUtils'
+import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
 import { JuceDateString } from './JuceDateString'
 import { JuceRSAKey } from './JuceRSAKey'
 
@@ -12,7 +8,7 @@ export class JuceKeyGeneration {
         params: GenerateKeyFileParams,
         date: Date = new Date()
     ) {
-        const xml = createKeyFileContentLine(
+        const xml = JuceKeyFileUtils.createKeyFileContentLine(
             {
                 appName: params.appName,
                 userEmail: params.userEmail,
@@ -22,7 +18,7 @@ export class JuceKeyGeneration {
             },
             JuceDateString.inHexMs(date)
         )
-        const comment = createKeyFileComment(
+        const comment = JuceKeyFileUtils.createKeyFileComment(
             {
                 appName: params.appName,
                 userEmail: params.userEmail,
@@ -31,14 +27,18 @@ export class JuceKeyGeneration {
             },
             JuceDateString.inFormattedComment(date)
         )
-        return createKeyFile(comment, xml, new JuceRSAKey(params.privateKey))
+        return JuceKeyFileUtils.createKeyFile(
+            comment,
+            xml,
+            new JuceRSAKey(params.privateKey)
+        )
     }
 
     static generateExpiringKeyFile(
         params: GenerateExpiringKeyFileParams,
         date: Date = new Date()
     ) {
-        const xml = createKeyFileContentLine(
+        const xml = JuceKeyFileUtils.createKeyFileContentLine(
             {
                 appName: params.appName,
                 userEmail: params.userEmail,
@@ -49,7 +49,7 @@ export class JuceKeyGeneration {
             JuceDateString.inHexMs(date),
             JuceDateString.inHexMs(params.expiryTime)
         )
-        const comment = createKeyFileComment(
+        const comment = JuceKeyFileUtils.createKeyFileComment(
             {
                 appName: params.appName,
                 userEmail: params.userEmail,
@@ -59,6 +59,10 @@ export class JuceKeyGeneration {
             JuceDateString.inFormattedComment(date),
             JuceDateString.inFormattedComment(params.expiryTime)
         )
-        return createKeyFile(comment, xml, new JuceRSAKey(params.privateKey))
+        return JuceKeyFileUtils.createKeyFile(
+            comment,
+            xml,
+            new JuceRSAKey(params.privateKey)
+        )
     }
 }

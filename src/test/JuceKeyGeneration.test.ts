@@ -1,38 +1,133 @@
 import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
 import { execTestBin } from 'src/test/test-utils'
-import { ZodFastCheck } from 'zod-fast-check'
-import {
-    generateExpiringKeyFileParamsValidator,
-    GenerateKeyFileParams
-} from 'src/types'
 import { JuceKeyGeneration } from 'src/juce/JuceKeyGeneration'
-import { z } from 'zod'
+import { JuceDateString } from 'src/juce/JuceDateString'
 
 describe('JuceKeyGeneration', () => {
-    it('generateExpiringKeyFile', ctx => {
+    type TestParams = {
+        userEmail: string
+        userName: string
+        dateString: string
+        publicKey: string
+        privateKey: string
+    }
+    const appName = 'testProductId'
+    const machineNumbers = 'testMachineId'
+
+    it('generateKeyFile', ctx => {
         console.log(`Testing ${ctx.task.name}...`)
-        const appName = 'testProductId'
-        const machineNumbers = 'testMachineId'
-        type TestParams = {
-            userEmail: string
-            userName: string
-            date: string
-            publicKey: string
-            privateKey: string
-        }
         const toResult = (
-            params: TestParams,
+            {
+                userEmail,
+                userName,
+                dateString,
+                publicKey,
+                privateKey
+            }: TestParams,
             count: bigint | undefined = undefined
         ) => {
-            const date = new Date(params.date)
-            const expiryTime = date
+            const date = new Date(dateString)
             const generateParams = {
-                userEmail: params.userEmail,
-                userName: params.userName,
+                userEmail,
+                userName,
                 appName,
                 machineNumbers,
-                privateKey: params.privateKey,
+                privateKey
+            }
+            const keyFileContent = JuceKeyGeneration.generateKeyFile(
+                generateParams,
+                date
+            )
+            const applyResult = JSON.parse(
+                execTestBin(
+                    'apply-key-file',
+                    JSON.stringify({
+                        keyFileContent,
+                        publicKey,
+                        count: count ? count.toString() : undefined
+                    })
+                )
+            )
+            return {
+                ...applyResult,
+                generateParams,
+                publicKey,
+                date
+            }
+        }
+        const baseEmail = 'a@a.a'
+        const baseDate = '2024-10-02T12:15:59.982Z'
+        const basePublicKey =
+            '11,92a747a6b9b2cde49f77c3488e116f0c5086ff4e94c14f97f7e55b15a57677bf'
+        const basePrivateKey =
+            '67852384bf5109ce8eaee433371b5d7100157e7a355412a04e3e8442e0bfc231,92a747a6b9b2cde49f77c3488e116f0c5086ff4e94c14f97f7e55b15a57677bf'
+        const baseString =
+            `{"userEmail":"${baseEmail}","userName":"&",` +
+            `"dateString":"${baseDate}",` +
+            `"publicKey":"${basePublicKey}","privateKey":"${basePrivateKey}"}`
+        const baseCase = JSON.parse(baseString)
+        const baseResult = toResult({
+            ...baseCase,
+            publicKey: basePublicKey,
+            privateKey: basePrivateKey
+        })
+        console.log({ baseCase, baseResult })
+        expect(baseResult.unlockMessage).toBe('OK')
+        expect(baseResult.unlockEmail).toBe(baseEmail)
+        let latest
+        let count = 0n
+        fc.assert(
+            fc.property(
+                fc.record({
+                    userEmail: fc.string({ minLength: 100 }),
+                    userName: fc.string({ minLength: 100 })
+                }),
+                input => {
+                    count += 1n
+                    const { publicKey, privateKey } = JSON.parse(
+                        execTestBin('create-key-pair')
+                    )
+                    const dateString = JuceDateString.inHexMs(new Date())
+                    const params = {
+                        ...input,
+                        publicKey,
+                        privateKey,
+                        dateString
+                    }
+                    const result = toResult(params, count)
+                    latest = { input, result }
+                    return (
+                        result.unlockMessage === 'OK' &&
+                        result.unlockEmail === input.userEmail
+                    )
+                }
+            ),
+            { numRuns: 10, seed: 1 }
+        )
+        console.log(latest)
+    })
+
+    it('generateExpiringKeyFile', ctx => {
+        console.log(`Testing ${ctx.task.name}...`)
+        const toResult = (
+            {
+                userEmail,
+                userName,
+                dateString,
+                publicKey,
+                privateKey
+            }: TestParams,
+            count: bigint | undefined = undefined
+        ) => {
+            const date = new Date(dateString)
+            const expiryTime = date
+            const generateParams = {
+                userEmail,
+                userName,
+                appName,
+                machineNumbers,
+                privateKey,
                 expiryTime
             }
             const keyFileContent = JuceKeyGeneration.generateExpiringKeyFile(
@@ -44,15 +139,15 @@ describe('JuceKeyGeneration', () => {
                     'apply-key-file',
                     JSON.stringify({
                         keyFileContent,
-                        publicKey: params.publicKey,
-                        count
+                        publicKey,
+                        count: count ? count.toString() : undefined
                     })
                 )
             )
             return {
                 ...applyResult,
                 generateParams,
-                publicKey: params.publicKey,
+                publicKey,
                 date
             }
         }
@@ -63,7 +158,8 @@ describe('JuceKeyGeneration', () => {
         const basePrivateKey =
             '67852384bf5109ce8eaee433371b5d7100157e7a355412a04e3e8442e0bfc231,92a747a6b9b2cde49f77c3488e116f0c5086ff4e94c14f97f7e55b15a57677bf'
         const baseString =
-            `{"userEmail":"${baseEmail}","userName":"","date":"${baseDate}",` +
+            `{"userEmail":"${baseEmail}","userName":"&",` +
+            `"dateString":"${baseDate}",` +
             `"publicKey":"${basePublicKey}","privateKey":"${basePrivateKey}"}`
         const baseCase = JSON.parse(baseString)
         const baseResult = toResult({
@@ -71,36 +167,38 @@ describe('JuceKeyGeneration', () => {
             publicKey: basePublicKey,
             privateKey: basePrivateKey
         })
-        // console.log({ baseCase, baseResult })
-        // expect(baseResult.unlockMessage).toBe('OK')
+        console.log({ baseCase, baseResult })
+        // expect(baseResult.unlockMessage).toBe('License has expired.')
         // expect(baseResult.unlockEmail).toBe(baseEmail)
-        // const generateExpiringKeyFileParamsArbitrary = ZodFastCheck().inputOf(
-        //     generateExpiringKeyFileParamsValidator
-        //         .omit({
-        //             appName: true,
-        //             machineNumbers: true
-        //         })
-        //         .extend({
-        //             appName: z.literal(appName),
-        //             machineNumbers: z.literal(machineNumbers)
-        //         })
-        // )
         // let latest
         // let count = 0n
         // fc.assert(
-        //     fc.property(generateExpiringKeyFileParamsArbitrary, input => {
-        //         count += 1n
-        //         const result = toResult(input, count)
-        //         latest = { input, result }
-        //         const parse =
-        //             generateExpiringKeyFileParamsValidator.safeParse(input)
-        //         return (
-        //             !parse.success ||
-        //             (result.unlockMessage === 'OK' &&
-        //                 result.unlockEmail === input.userEmail)
-        //         )
-        //     }),
-        //     { numRuns: 0, seed: 1 }
+        //     fc.property(
+        //         fc.record({
+        //             userEmail: fc.string({ minLength: 100 }),
+        //             userName: fc.string({ minLength: 100 })
+        //         }),
+        //         input => {
+        //             count += 1n
+        //             const { publicKey, privateKey } = JSON.parse(
+        //                 execTestBin('create-key-pair')
+        //             )
+        //             const dateString = JuceDateString.inHexMs(new Date())
+        //             const params = {
+        //                 ...input,
+        //                 publicKey,
+        //                 privateKey,
+        //                 dateString
+        //             }
+        //             const result = toResult(params, count)
+        //             latest = { input, result }
+        //             return (
+        //                 result.unlockMessage === 'OK' &&
+        //                 result.unlockEmail === input.userEmail
+        //             )
+        //         }
+        //     ),
+        //     { numRuns: 10 }
         // )
         // console.log(latest)
     })
