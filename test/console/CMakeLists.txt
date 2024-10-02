@@ -19,13 +19,13 @@ set_target_properties(${TARGET_CREATE_KEY}
     PROPERTIES OUTPUT_NAME "create-key-file-content-line"
 )
 
-# load-big-integer-from-utf8
-set(TARGET_LOAD_BIG_INT console_load_big_integer_from_utf8)
-console_config_target(${TARGET_LOAD_BIG_INT})
-target_sources(${TARGET_LOAD_BIG_INT} PRIVATE src/loadBigIntegerFromUTF8.cpp)
-target_link_libraries(${TARGET_LOAD_BIG_INT} PRIVATE juce::juce_core)
-set_target_properties(${TARGET_LOAD_BIG_INT}
-    PROPERTIES OUTPUT_NAME "load-big-integer-from-utf8"
+# load-from-memory-block
+set(TARGET_LOAD_FROM_MEMORY console_load_from_memory_block)
+console_config_target(${TARGET_LOAD_FROM_MEMORY})
+target_sources(${TARGET_LOAD_FROM_MEMORY} PRIVATE src/loadFromMemoryBlock.cpp)
+target_link_libraries(${TARGET_LOAD_FROM_MEMORY} PRIVATE juce::juce_core)
+set_target_properties(${TARGET_LOAD_FROM_MEMORY}
+    PROPERTIES OUTPUT_NAME "load-from-memory-block"
 )
 
 # divide-by
@@ -53,4 +53,26 @@ target_sources(${TARGET_APPLY_TO_VALUE} PRIVATE src/applyToValue.cpp)
 target_link_libraries(${TARGET_APPLY_TO_VALUE} PRIVATE juce::juce_cryptography)
 set_target_properties(${TARGET_APPLY_TO_VALUE}
     PROPERTIES OUTPUT_NAME "apply-to-value"
+)
+
+# create-key-pair
+set(TARGET_CREATE_KEY_PAIR console_create_key_pair)
+console_config_target(${TARGET_CREATE_KEY_PAIR})
+target_sources(${TARGET_CREATE_KEY_PAIR} PRIVATE src/createKeyPair.cpp)
+target_link_libraries(${TARGET_CREATE_KEY_PAIR} PRIVATE juce::juce_cryptography)
+set_target_properties(${TARGET_CREATE_KEY_PAIR}
+    PROPERTIES OUTPUT_NAME "create-key-pair"
+)
+
+# apply-key-file
+set(TARGET_APPLY_KEY_FILE console_apply_key_file)
+console_config_target(${TARGET_APPLY_KEY_FILE})
+target_sources(${TARGET_APPLY_KEY_FILE} PRIVATE src/applyKeyFile.cpp)
+target_link_libraries(${TARGET_APPLY_KEY_FILE}
+    PRIVATE
+    juce::juce_data_structures
+    juce::juce_product_unlocking
+)
+set_target_properties(${TARGET_APPLY_KEY_FILE}
+    PROPERTIES OUTPUT_NAME "apply-key-file"
 )

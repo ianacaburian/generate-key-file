@@ -1,4 +1,4 @@
-export * from './generateKeyFile'
+export * from './juce/JuceKeyGeneration'
 export {
     type GenerateKeyFileParams,
     type GenerateExpiringKeyFileParams
