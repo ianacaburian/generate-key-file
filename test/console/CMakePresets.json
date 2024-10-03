@@ -1,0 +1,15 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "xcode-macos-dev",
+            "displayName": "Configure Xcode for macOS development.",
+            "generator": "Xcode",
+            "binaryDir": "build/xcode-macos-dev",
+            "cacheVariables": {
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "13",
+                "CMAKE_COMPILE_WARNING_AS_ERROR": "OFF"
+            }
+        }
+    ]
+}

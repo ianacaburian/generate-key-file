@@ -1,7 +1,8 @@
 {
     "name": "@ianacaburian/generate-key-file",
-    "version": "0.0.4",
-    "description": "Provides juce_KeyGeneration::generateKeyFile() for javascript.",
+    "version": "0.1.1",
+    "description": "Ports juce_KeyGeneration::generateKeyFile() to node.",
+    "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts",
@@ -9,16 +10,23 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsup",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "clean": "rm -rf dist && npm run clean:test",
+        "lint": "eslint src",
+        "clean:test": "rm -rf test/bin/* && cd test/console && ./script/clean-build.sh",
+        "open:test/console": "cd test/console && ./script/open-xcode-macos-dev.sh",
+        "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test/bin",
+        "build": "npm run lint && npm run install:test/console && tsup",
+        "test": "vitest"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/ianacaburian/generate-key-file.git"
     },
     "keywords": [
-        "key-file",
+        "auth",
+        "cryptography",
         "juce",
+        "keyfile",
         "rsa"
     ],
     "author": "ianacaburian",
@@ -28,14 +36,27 @@
     },
     "homepage": "https://github.com/ianacaburian/generate-key-file#readme",
     "devDependencies": {
+        "@eslint/js": "^9.11.1",
+        "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+        "@types/jsbn": "^1.2.33",
         "@typescript-eslint/eslint-plugin": "^8.7.0",
         "@typescript-eslint/parser": "^8.7.0",
         "eslint": "^9.11.1",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.2.1",
+        "fast-check": "^3.22.0",
+        "globals": "^15.9.0",
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.0",
-        "typescript": "^5.6.2"
+        "typescript": "5.5.4",
+        "typescript-eslint": "^8.7.0",
+        "vitest": "^2.1.1",
+        "zod-fast-check": "^0.10.1"
+    },
+    "dependencies": {
+        "fast-xml-parser": "^4.5.0",
+        "jsbn": "^1.1.0",
+        "zod": "^3.23.8"
     }
 }
