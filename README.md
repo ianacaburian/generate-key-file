@@ -106,10 +106,16 @@ npm run open:test/console       # Open test/console project in Xcode.
 npm run install:test/console    # Build and install the test/console bins.
 ```
 
-Optional: Set "FC_NUM_RUMS" (default=1) to specify how many times to run each
-(randomly generated) propery-based test -- see
-[fast-check](https://github.com/dubzzz/fast-check).
+-   Optional: Set "FC_NUM_RUMS" (default=1) to specify how many times to run
+    each (randomly generated) propery-based test -- see
+    [fast-check](https://github.com/dubzzz/fast-check).
 
 ```
 FC_NUM_RUNS=1000 npm run test   # Run each fc test 1000 times.
+```
+
+-   Optional: Set "FC_SEED" (default=1) to specify the seed for each fc test.
+
+```
+FC_SEED=2 npm run test   # Run each fc test with seed=2.
 ```
