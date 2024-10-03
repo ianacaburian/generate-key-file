@@ -1,6 +1,6 @@
 {
     "name": "@ianacaburian/generate-key-file",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "Ports juce_KeyGeneration::generateKeyFile() to node.",
     "type": "module",
     "main": "./dist/index.js",

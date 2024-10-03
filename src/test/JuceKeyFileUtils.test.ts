@@ -2,7 +2,6 @@ import fc from 'fast-check'
 import { JuceDateString } from 'src/juce/JuceDateString'
 import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
 import { JuceRSAKey } from 'src/juce/JuceRSAKey'
-import { execTestBin, hexArbitrary } from 'src/test/test-utils'
 import {
     CreateKeyFileCommentParams,
     createKeyFileCommentParamsValidator,
@@ -11,6 +10,8 @@ import {
 } from 'src/types'
 import { describe, expect, it } from 'vitest'
 import { ZodFastCheck } from 'zod-fast-check'
+
+import { execTestBin, hexArbitrary } from './test-utils'
 
 describe('JuceKeyFileUtils', () => {
     it('createKeyFileContentLine', ctx => {

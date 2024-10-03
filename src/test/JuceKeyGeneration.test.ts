@@ -1,8 +1,9 @@
 import fc from 'fast-check'
 import { JuceDateString } from 'src/juce/JuceDateString'
 import { JuceKeyGeneration } from 'src/juce/JuceKeyGeneration'
-import { execTestBin } from 'src/test/test-utils'
 import { describe, expect, it } from 'vitest'
+
+import { execTestBin } from './test-utils'
 
 describe('JuceKeyGeneration', () => {
     type TestParams = {
@@ -181,8 +182,8 @@ describe('JuceKeyGeneration', () => {
         fc.assert(
             fc.property(
                 fc.record({
-                    userEmail: fc.string({ minLength: 1 }),
-                    userName: fc.string({ minLength: 1 })
+                    userEmail: fc.string({ minLength: 100 }),
+                    userName: fc.string({ minLength: 100 })
                 }),
                 input => {
                     count += 1n

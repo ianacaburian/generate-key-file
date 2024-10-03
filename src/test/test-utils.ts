@@ -1,6 +1,4 @@
 import { execSync } from 'child_process'
-import crypto from 'crypto'
-import os from 'os'
 import path from 'path'
 import fc from 'fast-check'
 

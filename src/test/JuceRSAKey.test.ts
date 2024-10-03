@@ -1,8 +1,9 @@
 import fc from 'fast-check'
 import { JuceBigInteger } from 'src/juce/JuceBigInteger'
 import { JuceRSAKey } from 'src/juce/JuceRSAKey'
-import { execTestBin, hexArbitrary } from 'src/test/test-utils'
 import { describe, expect, it } from 'vitest'
+
+import { execTestBin, hexArbitrary } from './test-utils'
 
 describe('JuceRSAKey', () => {
     it('applyToValue', ctx => {

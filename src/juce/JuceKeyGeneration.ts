@@ -1,7 +1,7 @@
-import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
 import { GenerateExpiringKeyFileParams, GenerateKeyFileParams } from 'src/types'
 
 import { JuceDateString } from './JuceDateString'
+import { JuceKeyFileUtils } from './JuceKeyFileUtils'
 import { JuceRSAKey } from './JuceRSAKey'
 
 export class JuceKeyGeneration {
