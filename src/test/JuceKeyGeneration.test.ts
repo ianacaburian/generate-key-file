@@ -75,6 +75,7 @@ describe('JuceKeyGeneration', () => {
         console.log({ baseCase, baseResult })
         expect(baseResult.unlockMessage).toBe('OK')
         expect(baseResult.unlockEmail).toBe(baseEmail)
+        expect(baseResult.isUnlocked).toBe('UNLOCKED')
         let latest
         let count = 0n
         fc.assert(
@@ -99,11 +100,11 @@ describe('JuceKeyGeneration', () => {
                     latest = { input, result }
                     return (
                         result.unlockMessage === 'OK' &&
-                        result.unlockEmail === input.userEmail
+                        result.unlockEmail === input.userEmail &&
+                        result.isUnlocked === 'UNLOCKED'
                     )
                 }
-            ),
-            { numRuns: 10, seed: 1 }
+            )
         )
         console.log(latest)
     })
@@ -168,38 +169,43 @@ describe('JuceKeyGeneration', () => {
             privateKey: basePrivateKey
         })
         console.log({ baseCase, baseResult })
-        // expect(baseResult.unlockMessage).toBe('License has expired.')
-        // expect(baseResult.unlockEmail).toBe(baseEmail)
-        // let latest
-        // let count = 0n
-        // fc.assert(
-        //     fc.property(
-        //         fc.record({
-        //             userEmail: fc.string({ minLength: 100 }),
-        //             userName: fc.string({ minLength: 100 })
-        //         }),
-        //         input => {
-        //             count += 1n
-        //             const { publicKey, privateKey } = JSON.parse(
-        //                 execTestBin('create-key-pair')
-        //             )
-        //             const dateString = JuceDateString.inHexMs(new Date())
-        //             const params = {
-        //                 ...input,
-        //                 publicKey,
-        //                 privateKey,
-        //                 dateString
-        //             }
-        //             const result = toResult(params, count)
-        //             latest = { input, result }
-        //             return (
-        //                 result.unlockMessage === 'OK' &&
-        //                 result.unlockEmail === input.userEmail
-        //             )
-        //         }
-        //     ),
-        //     { numRuns: 10 }
-        // )
-        // console.log(latest)
+        expect(baseResult.unlockEmail).toBe(baseEmail)
+        expect(baseResult.isUnlocked).toBe('LOCKED')
+        expect(baseResult.unlockExpiryTime).toBe(
+            JuceDateString.inHexMs(new Date(baseDate))
+        )
+        let latest
+        let count = 0n
+        fc.assert(
+            fc.property(
+                fc.record({
+                    userEmail: fc.string({ minLength: 100 }),
+                    userName: fc.string({ minLength: 100 })
+                }),
+                input => {
+                    count += 1n
+                    const { publicKey, privateKey } = JSON.parse(
+                        execTestBin('create-key-pair')
+                    )
+                    const dateString = JuceDateString.inHexMs(new Date())
+                    const params = {
+                        ...input,
+                        publicKey,
+                        privateKey,
+                        dateString
+                    }
+                    const result = toResult(params, count)
+                    latest = { input, result }
+                    return (
+                        result.unlockMessage === 'OK' &&
+                        result.unlockEmail === input.userEmail &&
+                        result.isUnlocked === 'LOCKED' &&
+                        result.unlockExpiryTime === dateString
+                    )
+                }
+            ),
+            { numRuns: 1 }
+        )
+        console.log(latest)
     })
 })

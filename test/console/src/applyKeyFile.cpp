@@ -49,8 +49,15 @@ applyKeyFile(
     auto const unlockMessage =
         applyResult.wasOk() ? "OK" : applyResult.getErrorMessage();
     auto const unlockEmail = unlockStatus.getUserEmail();
+    auto const isUnlocked  = unlockStatus.isUnlocked() ? "UNLOCKED" : "LOCKED";
+    auto const unlockExpiryTime =
+        juce::String::toHexString(unlockStatus.getExpiryTime().toMilliseconds()
+        );
 
-    return std::make_tuple(publicKeyString, unlockMessage, unlockEmail);
+    return std::make_tuple(
+        publicKeyString, unlockMessage, unlockEmail, isUnlocked,
+        unlockExpiryTime
+    );
 }
 
 int
@@ -69,8 +76,9 @@ main() {
     auto const publicKeyParam = params->getProperty("publicKey").toString();
     auto const countParam     = params->getProperty("count").toString();
 
-    auto const [publicKeyString, unlockMessage, unlockEmail] =
-        applyKeyFile(keyFileContentParam, publicKeyParam);
+    auto const
+        [publicKeyString, unlockMessage, unlockEmail, isUnlocked,
+         unlockExpiryTime] = applyKeyFile(keyFileContentParam, publicKeyParam);
 
     auto  output  = juce::var{new juce::DynamicObject{}};
     auto *context = output.getDynamicObject();
@@ -79,6 +87,8 @@ main() {
     context->setProperty("publicKeyString", publicKeyString);
     context->setProperty("unlockMessage", unlockMessage);
     context->setProperty("unlockEmail", unlockEmail);
+    context->setProperty("isUnlocked", isUnlocked);
+    context->setProperty("unlockExpiryTime", unlockExpiryTime);
     auto const outputJson = juce::JSON::toString(output).toStdString();
     if (countParam.isNotEmpty()) {
         std::cerr << "\nCount: " << countParam.toStdString() << "\n"

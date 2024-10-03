@@ -108,7 +108,6 @@ export class JuceKeyFileUtils {
         lines.push(comment)
         lines.push('')
 
-        console.log({ comment, xmlLine })
         const charsPerLine = 70
         while (asHex.length > 0) {
             lines.push(asHex.substring(0, charsPerLine))
