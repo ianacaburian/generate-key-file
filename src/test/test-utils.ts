@@ -1,8 +1,8 @@
-import path from 'path'
 import { execSync } from 'child_process'
-import fc from 'fast-check'
-import os from 'os'
 import crypto from 'crypto'
+import os from 'os'
+import path from 'path'
+import fc from 'fast-check'
 
 export const hexArbitrary = fc.string({
     unit: fc.constantFrom(...'0123456789abcdef'),

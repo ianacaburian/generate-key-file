@@ -3,8 +3,9 @@ import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams
 } from 'src/types'
-import { JuceRSAKey } from './JuceRSAKey'
+
 import { JuceBigInteger } from './JuceBigInteger'
+import { JuceRSAKey } from './JuceRSAKey'
 
 const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
 

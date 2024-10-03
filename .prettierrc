@@ -1,4 +1,5 @@
 {
+    "plugins": ["@ianvs/prettier-plugin-sort-imports"],
     "trailingComma": "none",
     "tabWidth": 4,
     "semi": false,

@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
-import { hexArbitrary, execTestBin } from 'src/test/test-utils'
 import { JuceBigInteger } from 'src/juce/JuceBigInteger'
+import { execTestBin, hexArbitrary } from 'src/test/test-utils'
+import { describe, expect, it } from 'vitest'
 
 describe('JuceBigInteger', () => {
     it('fromUTF8MemoryBlock', ctx => {

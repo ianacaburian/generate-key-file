@@ -1,4 +1,4 @@
-# generate-key-file (Under Development)
+# generate-key-file
 
 Ports juce_KeyGeneration::generateKeyFile() to node.
 

@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
 import fc from 'fast-check'
-import { execTestBin } from 'src/test/test-utils'
-import { JuceKeyGeneration } from 'src/juce/JuceKeyGeneration'
 import { JuceDateString } from 'src/juce/JuceDateString'
+import { JuceKeyGeneration } from 'src/juce/JuceKeyGeneration'
+import { execTestBin } from 'src/test/test-utils'
+import { describe, expect, it } from 'vitest'
 
 describe('JuceKeyGeneration', () => {
     type TestParams = {
@@ -153,13 +153,15 @@ describe('JuceKeyGeneration', () => {
             }
         }
         const baseEmail = 'a@a.a'
-        const baseDate = '2024-10-02T12:15:59.982Z'
+        const baseName = '&'
+        const now = new Date()
+        const baseDate = now.toISOString()
         const basePublicKey =
             '11,92a747a6b9b2cde49f77c3488e116f0c5086ff4e94c14f97f7e55b15a57677bf'
         const basePrivateKey =
             '67852384bf5109ce8eaee433371b5d7100157e7a355412a04e3e8442e0bfc231,92a747a6b9b2cde49f77c3488e116f0c5086ff4e94c14f97f7e55b15a57677bf'
         const baseString =
-            `{"userEmail":"${baseEmail}","userName":"&",` +
+            `{"userEmail":"${baseEmail}","userName":"${baseName}",` +
             `"dateString":"${baseDate}",` +
             `"publicKey":"${basePublicKey}","privateKey":"${basePrivateKey}"}`
         const baseCase = JSON.parse(baseString)
@@ -179,20 +181,21 @@ describe('JuceKeyGeneration', () => {
         fc.assert(
             fc.property(
                 fc.record({
-                    userEmail: fc.string({ minLength: 100 }),
-                    userName: fc.string({ minLength: 100 })
+                    userEmail: fc.string({ minLength: 1 }),
+                    userName: fc.string({ minLength: 1 })
                 }),
                 input => {
                     count += 1n
                     const { publicKey, privateKey } = JSON.parse(
                         execTestBin('create-key-pair')
                     )
-                    const dateString = JuceDateString.inHexMs(new Date())
+                    const date = new Date()
                     const params = {
-                        ...input,
+                        userEmail: input.userEmail,
+                        userName: input.userName,
                         publicKey,
                         privateKey,
-                        dateString
+                        dateString: date.toISOString()
                     }
                     const result = toResult(params, count)
                     latest = { input, result }
@@ -200,11 +203,11 @@ describe('JuceKeyGeneration', () => {
                         result.unlockMessage === 'OK' &&
                         result.unlockEmail === input.userEmail &&
                         result.isUnlocked === 'LOCKED' &&
-                        result.unlockExpiryTime === dateString
+                        result.unlockExpiryTime === JuceDateString.inHexMs(date)
                     )
                 }
-            ),
-            { numRuns: 1 }
+            )
+            // { numRuns: 50000, seed: 1 }
         )
         console.log(latest)
     })
