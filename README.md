@@ -2,15 +2,20 @@
 
 Ports juce_KeyGeneration::generateKeyFile() to node.
 
-# Installation
+![master build status](https://github.com/ianacaburian/generate-key-file/actions/workflows/build.yml/badge.svg?branch=master)
+[![npm version](https://badge.fury.io/js/@ianacaburian%2Fgenerate-key-file.svg)](https://badge.fury.io/js/@ianacaburian%2Fgenerate-key-file)
+![GitHub License](https://img.shields.io/github/license/ianacaburian/generate-key-file)
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/ianacaburian)
+
+## Installation
 
 ```
 npm i @ianacaburian/generate-key-file
 ```
 
-# Usage
+## Usage
 
-### `generateKeyFile(params: GenerateKeyFileParams, date: Date = new Date()) => string`
+-   `generateKeyFile(params: GenerateKeyFileParams, date: Date = new Date()) => string`
 
 ```
 import { generateKeyFile } from '@ianacaburian/generate-key-file'
@@ -24,6 +29,10 @@ const keyFileContent = generateKeyFile({
 })
 ```
 
+-   Returns the <key> string value to be used in the XML response for decryption
+    by the client.
+-   Throws ZodError for invalid params -- see
+    [zod](https://github.com/colinhacks/zod).
 -   From juce_KeyFileGeneration.h:
 
 ```
@@ -45,12 +54,7 @@ const keyFileContent = generateKeyFile({
     */
 ```
 
--   Returns the <key> string value to be used in the XML response for decryption
-    by the client.
--   Throws ZodError for invalid params -- see
-    [zod](https://github.com/colinhacks/zod).
-
-### `generateExpiringKeyFile(params: GenerateExpiringKeyFileParams, date: Date = new Date()) => string`
+-   `generateExpiringKeyFile(params: GenerateExpiringKeyFileParams, date: Date = new Date()) => string`
 
 ```
 import { generateExpiringKeyFile } from '@ianacaburian/generate-key-file'
@@ -66,6 +70,10 @@ const expiringKeyFileContent = generateExpiringKeyFile({
 })
 ```
 
+-   Returns the <key> string value to be used in the XML response for decryption
+    by the client.
+-   Throws ZodError for invalid params -- see
+    [zod](https://github.com/colinhacks/zod).
 -   From juce_KeyFileGeneration.h:
 
 ```
@@ -80,12 +88,7 @@ const expiringKeyFileContent = generateExpiringKeyFile({
     */
 ```
 
--   Returns the <key> string value to be used in the XML response for decryption
-    by the client.
--   Throws ZodError for invalid params -- see
-    [zod](https://github.com/colinhacks/zod).
-
-# Development
+## Development
 
 ```
 npm run clean                   # Clean dist and test builds (inc test bins).
@@ -93,7 +96,7 @@ npm run lint                    # Lint the src dir.
 npm run build                   # Lint, install tests, and build package.
 ```
 
-## Testing
+### Testing
 
 ```
 npm run test                    # Start vitest to run all tests.
