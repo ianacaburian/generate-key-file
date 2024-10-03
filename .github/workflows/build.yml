@@ -1,0 +1,39 @@
+name: CI
+
+on:
+    workflow_dispatch:
+    pull_request:
+        branches: ['master']
+
+env:
+    HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+jobs:
+    build_and_test:
+        name: ${{ matrix.name }}
+        runs-on: ${{ matrix.os }}
+        defaults:
+            run:
+                shell: bash
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - name: macOS
+                      os: macos-14
+
+        steps:
+            - name: Installing OSX utils
+              if: ${{ matrix.name == 'macOS' }}
+              run: brew install osxutils
+
+            - name: Checking out code
+              uses: actions/checkout@v3
+              with:
+                  submodules: true
+
+            - name: Lint, install tests, and build package.
+              run: npm run build
+
+            - name: Perform single test run.
+              run: npm run test run
