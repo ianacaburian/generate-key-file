@@ -3,7 +3,7 @@
 Ports juce_KeyGeneration::generateKeyFile() to node.
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ianacaburian/generate-key-file/build.yml)
-[![npm version](https://badge.fury.io/js/@ianacaburian%2Fgenerate-key-file.svg)](https://badge.fury.io/js/@ianacaburian%2Fgenerate-key-file)
+![NPM Version](https://img.shields.io/npm/v/%40ianacaburian%2Fgenerate-key-file)
 ![GitHub License](https://img.shields.io/github/license/ianacaburian/generate-key-file)
 ![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/ianacaburian)
 
