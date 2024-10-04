@@ -14,7 +14,7 @@
         "lint": "eslint src",
         "clean:test": "rm -rf test/bin/* && cd test/console && ./script/clean-build.sh",
         "open:test/console": "cd test/console && ./script/open-xcode-macos-dev.sh",
-        "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test/bin",
+        "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test",
         "build": "npm run lint && npm run install:test/console && tsup",
         "test": "vitest"
     },

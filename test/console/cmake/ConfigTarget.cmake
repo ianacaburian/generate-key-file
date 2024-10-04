@@ -21,10 +21,7 @@ macro(console_config_target TARGET_NAME)
         PRIVATE
         ${PROJECT_SOURCE_DIR}
     )
-    set(console_INSTALL_DIR "${PROJECT_SOURCE_DIR}/../bin")
     install(TARGETS ${TARGET_NAME}
-        RUNTIME DESTINATION "${console_INSTALL_DIR}"
-        LIBRARY DESTINATION "${console_INSTALL_DIR}"
-        ARCHIVE DESTINATION "${console_INSTALL_DIR}"
+        RUNTIME DESTINATION "bin"
     )
 endmacro()
