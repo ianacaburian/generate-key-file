@@ -5,7 +5,7 @@ Ports juce_KeyGeneration::generateKeyFile() to node.
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ianacaburian/generate-key-file/build.yml)
 ![NPM Version](https://img.shields.io/npm/v/%40ianacaburian%2Fgenerate-key-file)
 ![GitHub License](https://img.shields.io/github/license/ianacaburian/generate-key-file)
-![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/ianacaburian)
+![X (formerly Twitter) URL](https://img.shields.io/twitter/url?url=https%3A%2F%2Ftwitter.com%2Fintent%2Fpost%3Ftext%3DNeed%2520to%2520auth%2520a%2520JUCE%2520app%2520in%2520nodejs%2520%253F%2520Check%2520out%2520generate-key-file%2520by%2520%2540ianacaburian%2520%2520%26url%3Dhttps%253A%252F%252Fgithub.com%252Fianacaburian%252Fgenerate-key-file)
 
 ## Installation
 
@@ -15,7 +15,15 @@ npm i @ianacaburian/generate-key-file
 
 ## Usage
 
--   `generateKeyFile(params: GenerateKeyFileParams, date: Date = new Date()) => string`
+### `generateKeyFile`
+
+-   Signature:
+
+```
+generateKeyFile(params: GenerateKeyFileParams, date: Date = new Date()) => string
+```
+
+-   Example:
 
 ```
 import { generateKeyFile } from '@ianacaburian/generate-key-file'
@@ -54,7 +62,15 @@ const keyFileContent = generateKeyFile({
     */
 ```
 
--   `generateExpiringKeyFile(params: GenerateExpiringKeyFileParams, date: Date = new Date()) => string`
+### `generateExpiringKeyFile`
+
+-   Signature:
+
+```
+generateExpiringKeyFile(params: GenerateExpiringKeyFileParams, date: Date = new Date()) => string
+```
+
+-   Example:
 
 ```
 import { generateExpiringKeyFile } from '@ianacaburian/generate-key-file'
