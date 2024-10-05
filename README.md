@@ -4,7 +4,6 @@ Ports juce_KeyGeneration::generateKeyFile() to node.
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ianacaburian/generate-key-file/build.yml)](https://github.com/ianacaburian/generate-key-file/actions)
 [![NPM Version](https://img.shields.io/npm/v/%40ianacaburian%2Fgenerate-key-file)](https://www.npmjs.com/package/@ianacaburian/generate-key-file)
-[![GitHub License](https://img.shields.io/github/license/ianacaburian/generate-key-file)](https://github.com/ianacaburian/generate-key-file/blob/main/LICENSE)
 [![X (formerly Twitter) URL](https://img.shields.io/twitter/url?url=https%3A%2F%2Ftwitter.com%2Fintent%2Fpost%3Ftext%3DNeed%2520to%2520auth%2520a%2520JUCE%2520app%2520in%2520nodejs%2520%253F%2520Check%2520out%2520generate-key-file%2520by%2520%2540ianacaburian%2520%2520%26url%3Dhttps%253A%252F%252Fgithub.com%252Fianacaburian%252Fgenerate-key-file)](https://twitter.com/intent/tweet?text=Need%20to%20auth%20a%20JUCE%20app%20in%20nodejs%20%3F%20Check%20out%20generate-key-file%20by%20%40ianacaburian%20%20&url=https%3A%2F%2Fgithub.com%2Fianacaburian%2Fgenerate-key-file)
 
 ## Installation
