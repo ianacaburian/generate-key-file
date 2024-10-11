@@ -8,12 +8,6 @@ export const hexArbitrary = fc.string({
     maxLength: 1000
 })
 
-export const rsaKeyArbitrary = fc.string({
-    unit: fc.constantFrom(...'0123456789abcdef'),
-    minLength: 300,
-    maxLength: 1000
-})
-
 export const execTestBin = (bin: string, input?: string): string => {
     try {
         return execSync(path.join(__dirname, '..', '..', 'test', 'bin', bin), {
