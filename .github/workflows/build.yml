@@ -35,8 +35,8 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Lint, install tests, and build package.
+            - name: Lint, install tests, and build package
               run: npm run build
 
-            - name: Perform single test run.
+            - name: Perform single test run
               run: npm run test run

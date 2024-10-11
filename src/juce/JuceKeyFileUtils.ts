@@ -38,7 +38,8 @@ const xmlAttributeValueProcessor = (value: unknown): string =>
 const xmlBuilder = new XMLBuilder({
     ignoreAttributes: false,
     suppressEmptyNode: true,
-    processEntities: false, // Disabled since it doesn't port to juce as is
+    // processEntities is disabled since it doesn't port to juce as is
+    processEntities: false,
     attributeValueProcessor: (_, value) => xmlAttributeValueProcessor(value)
 })
 
@@ -62,7 +63,7 @@ export class JuceKeyFileUtils {
                 '@_email': userEmail,
                 [`@_${machineNumbersAttributeName}`]: machineNumbers,
                 '@_app': appName,
-                '@_date': date, // Does not affect key file decryption
+                '@_date': date,
                 ...(expiryTime ? { '@_expiryTime': expiryTime } : {})
             }
         }
