@@ -1,6 +1,5 @@
 import { GenerateExpiringKeyFileParams, GenerateKeyFileParams } from 'src/types'
 
-import { JuceDateString } from './JuceDateString'
 import { JuceKeyFileUtils } from './JuceKeyFileUtils'
 import { JuceRSAKey } from './JuceRSAKey'
 
@@ -17,7 +16,7 @@ export class JuceKeyGeneration {
                 machineNumbers: params.machineNumbers,
                 machineNumbersAttributeName: 'mach'
             },
-            JuceDateString.inHexMs(date)
+            JuceKeyFileUtils.toHexStringMilliseconds(date)
         )
         const comment = JuceKeyFileUtils.createKeyFileComment(
             {
@@ -26,7 +25,7 @@ export class JuceKeyGeneration {
                 userName: params.userName,
                 machineNumbers: params.machineNumbers
             },
-            JuceDateString.inFormattedComment(date)
+            JuceKeyFileUtils.toString(date)
         )
         return JuceKeyFileUtils.createKeyFile(
             comment,
@@ -47,8 +46,8 @@ export class JuceKeyGeneration {
                 machineNumbers: params.machineNumbers,
                 machineNumbersAttributeName: 'expiring_mach'
             },
-            JuceDateString.inHexMs(date),
-            JuceDateString.inHexMs(params.expiryTime)
+            JuceKeyFileUtils.toHexStringMilliseconds(date),
+            JuceKeyFileUtils.toHexStringMilliseconds(params.expiryTime)
         )
         const comment = JuceKeyFileUtils.createKeyFileComment(
             {
@@ -57,8 +56,8 @@ export class JuceKeyGeneration {
                 userName: params.userName,
                 machineNumbers: params.machineNumbers
             },
-            JuceDateString.inFormattedComment(date),
-            JuceDateString.inFormattedComment(params.expiryTime)
+            JuceKeyFileUtils.toString(date),
+            JuceKeyFileUtils.toString(params.expiryTime)
         )
         return JuceKeyFileUtils.createKeyFile(
             comment,

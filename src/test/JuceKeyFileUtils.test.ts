@@ -1,5 +1,4 @@
 import fc from 'fast-check'
-import { JuceDateString } from 'src/juce/JuceDateString'
 import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
 import { JuceRSAKey } from 'src/juce/JuceRSAKey'
 import {
@@ -9,6 +8,7 @@ import {
     createKeyFileContentLineParamsValidator
 } from 'src/types'
 import { describe, expect, it } from 'vitest'
+import { z } from 'zod'
 import { ZodFastCheck } from 'zod-fast-check'
 
 import { execTestBin, hexArbitrary } from './test-utils'
@@ -16,36 +16,55 @@ import { execTestBin, hexArbitrary } from './test-utils'
 describe('JuceKeyFileUtils', () => {
     it('createKeyFileContentLine', ctx => {
         console.log(`Testing ${ctx.task.name}...`)
-        const toResult = (params: CreateKeyFileContentLineParams) => {
-            const date = JuceDateString.inHexMs(new Date())
+        type TestParams = CreateKeyFileContentLineParams & {
+            date: string
+        }
+        const toResult = (params: TestParams) => {
             return {
                 fromJuce: execTestBin(
                     'create-key-file-content-line',
-                    JSON.stringify({ ...params, date })
+                    JSON.stringify({ ...params })
                 ),
                 fromUtil: JuceKeyFileUtils.createKeyFileContentLine(
-                    params,
-                    date
+                    {
+                        appName: params.appName,
+                        userEmail: params.userEmail,
+                        userName: params.userName,
+                        machineNumbers: params.machineNumbers,
+                        machineNumbersAttributeName:
+                            params.machineNumbersAttributeName
+                    },
+                    params.date
                 )
             }
         }
+        const baseDate = JuceKeyFileUtils.toHexStringMilliseconds(
+            new Date('1970-01-01T00:00:00.000Z')
+        )
         const baseString =
             `{"appName":"'",` +
             `"userEmail":"a@a.a",` +
             `"userName":"&",` +
             `"machineNumbers":"\\"",` +
-            `"machineNumbersAttributeName":"mach"}`
+            `"machineNumbersAttributeName":"mach",` +
+            `"date":"${baseDate}"}`
         const baseCase = JSON.parse(baseString)
         const baseResult = toResult(baseCase)
         console.log({ baseCase, baseResult })
         expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
         const createKeyFileContentLineParamsArbitrary = ZodFastCheck().inputOf(
-            createKeyFileContentLineParamsValidator
+            createKeyFileContentLineParamsValidator.extend({
+                date: z.date(),
+                expiryTime: z.date()
+            })
         )
         let latest
         fc.assert(
             fc.property(createKeyFileContentLineParamsArbitrary, input => {
-                const result = toResult(input)
+                const result = toResult({
+                    ...input,
+                    date: JuceKeyFileUtils.toHexStringMilliseconds(input.date)
+                })
                 latest = { input, result }
                 const parse =
                     createKeyFileContentLineParamsValidator.safeParse(input)
@@ -57,32 +76,46 @@ describe('JuceKeyFileUtils', () => {
 
     it('createKeyFileComment', ctx => {
         console.log(`Testing ${ctx.task.name}...`)
-        const toResult = (params: CreateKeyFileCommentParams) => {
-            const date = JuceDateString.inFormattedComment(new Date())
+        type TestParams = CreateKeyFileCommentParams & {
+            created: string
+        }
+        const toResult = (params: TestParams) => {
             return {
                 fromJuce: execTestBin(
                     'create-key-file-comment',
-                    JSON.stringify({ ...params, date })
+                    JSON.stringify({ ...params })
                 ),
-                fromUtil: JuceKeyFileUtils.createKeyFileComment(params, date)
+                fromUtil: JuceKeyFileUtils.createKeyFileComment(
+                    params,
+                    params.created
+                )
             }
         }
+        const baseDate = JuceKeyFileUtils.toString(
+            new Date('1970-01-01T00:00:00.000Z')
+        )
         const baseString =
             `{"appName":"'",` +
             `"userEmail":"a@a.a",` +
             `"userName":"&",` +
-            `"machineNumbers":"\\""}`
+            `"machineNumbers":"\\"",` +
+            `"created":"${baseDate}"}`
         const baseCase = JSON.parse(baseString)
         const baseResult = toResult(baseCase)
         console.log({ baseCase, baseResult })
         expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
         const createKeyFileCommentParamsArbitrary = ZodFastCheck().inputOf(
-            createKeyFileCommentParamsValidator
+            createKeyFileCommentParamsValidator.extend({
+                created: z.date()
+            })
         )
         let latest
         fc.assert(
             fc.property(createKeyFileCommentParamsArbitrary, input => {
-                const result = toResult(input)
+                const result = toResult({
+                    ...input,
+                    created: JuceKeyFileUtils.toString(input.created)
+                })
                 latest = { input, result }
                 const parse =
                     createKeyFileCommentParamsValidator.safeParse(input)

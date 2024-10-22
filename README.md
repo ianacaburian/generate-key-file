@@ -116,9 +116,9 @@ npm run build                   # Lint, install tests, and build package.
 ```
 npm run test                    # Start vitest to run all tests.
 npm run test -- -t "divideBy"   # Start vitest to run one test.
-npm run clean:test              # Clean test build.
-npm run open:test/console       # Open test/console project in Xcode.
-npm run install:test/console    # Build and install the test/console bins.
+npm run cm:clean                # Clean test build.
+npm run cm:open                 # Open test/console project in Xcode.
+npm run cm:install              # Build and install the test/console bins.
 ```
 
 -   Optional: Set "FC_NUM_RUMS" (default=1) to specify how many times to run

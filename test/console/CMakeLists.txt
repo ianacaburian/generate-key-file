@@ -3,7 +3,7 @@ include(cmake/ConfigTarget.cmake)
 include(cmake/CPM.cmake)
 CPMAddPackage(juce
     NAME juce
-    GIT_TAG develop
+    GIT_TAG 8.0.3
     GITHUB_REPOSITORY juce-framework/juce
     SYSTEM YES
     EXCLUDE_FROM_ALL YES
