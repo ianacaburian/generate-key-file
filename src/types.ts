@@ -46,7 +46,9 @@ export type GenerateKeyFileParams = z.infer<
 
 export const generateExpiringKeyFileParamsValidator =
     generateKeyFileParamsValidator.extend({
-        expiryTime: z.date()
+        expiryTime: z.date().min(new Date('1970-01-01T00:00:00.001Z'), {
+            message: 'Expiry time must be after 1970-01-01T00:00:00.000Z'
+        })
     })
 export type GenerateExpiringKeyFileParams = z.infer<
     typeof generateExpiringKeyFileParamsValidator

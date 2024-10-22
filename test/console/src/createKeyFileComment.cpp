@@ -4,7 +4,7 @@ static auto
 createKeyFileComment(
     juce::String const &appName, juce::String const &userEmail,
     juce::String const &userName, juce::String const &machineNumbers,
-    juce::String const &date
+    juce::String const &created
 ) noexcept {
     // Taken from juce::KeyFileUtils::createKeyFileComment()
     using namespace juce;
@@ -16,7 +16,7 @@ createKeyFileComment(
 
     comment << "Email: " << userEmail << newLine
             << "Machine numbers: " << machineNumbers << newLine
-            << "Created: " << date;
+            << "Created: " << created;
 
     return comment;
 }
@@ -35,7 +35,7 @@ main() {
     auto const content = createKeyFileComment(
         params->getProperty("appName"), params->getProperty("userEmail"),
         params->getProperty("userName"), params->getProperty("machineNumbers"),
-        params->getProperty("date")
+        params->getProperty("created")
     );
 
     auto const output = content.toStdString();

@@ -1,6 +1,6 @@
 {
     "name": "@ianacaburian/generate-key-file",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Ports juce_KeyGeneration::generateKeyFile() to node.",
     "type": "module",
     "main": "./dist/index.js",
@@ -10,12 +10,12 @@
         "dist"
     ],
     "scripts": {
-        "clean": "rm -rf dist && npm run clean:test",
+        "clean": "rm -rf dist && npm run cm:clean",
         "lint": "eslint src",
-        "clean:test": "rm -rf test/bin/* && cd test/console && ./script/clean-build.sh",
-        "open:test/console": "cd test/console && ./script/open-xcode-macos-dev.sh",
-        "install:test/console": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test",
-        "build": "npm run lint && npm run install:test/console && tsup",
+        "cm:clean": "rm -rf test/bin/* && cd test/console && ./cmake/clean-build.sh",
+        "cm:open": "cd test/console && ./cmake/open-xcode-macos-dev.sh",
+        "cm:install": "cmake -S test/console -B test/console/build && cmake --build test/console/build && cmake --install test/console/build --prefix test",
+        "build": "npm run lint && npm run cm:install && tsup",
         "test": "vitest"
     },
     "repository": {
