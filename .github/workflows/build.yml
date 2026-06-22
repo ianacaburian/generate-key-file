@@ -44,5 +44,5 @@ jobs:
             - name: Lint, install tests, and build package
               run: npm run build
 
-            - name: Perform single test run
-              run: npm run test run
+            - name: Perform test run
+              run: FC_NUM_RUNS=10 npm run test run

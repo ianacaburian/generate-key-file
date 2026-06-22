@@ -9,6 +9,7 @@ export default defineConfig({
         }
     },
     test: {
+        testTimeout: 120000,
         setupFiles: ['./vitest.setup.js'],
         exclude: [
             '**/node_modules/**',

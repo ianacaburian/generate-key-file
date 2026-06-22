@@ -1,4 +1,3 @@
-import { XMLBuilder } from 'fast-xml-parser'
 import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams
@@ -29,19 +28,19 @@ const xmlAttributeCharProcessor = (char: string): string =>
                   ? '&lt;'
                   : `&#${char.charCodeAt(0)};`
 
-const xmlAttributeValueProcessor = (value: unknown): string =>
+const escapeAttr = (value: string): string =>
     // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
-    typeof value !== 'string'
-        ? ''
-        : value.split('').map(xmlAttributeCharProcessor).join('')
+    value.split('').map(xmlAttributeCharProcessor).join('')
 
-const xmlBuilder = new XMLBuilder({
-    ignoreAttributes: false,
-    suppressEmptyNode: true,
-    // processEntities is disabled since it doesn't port to juce as is
-    processEntities: false,
-    attributeValueProcessor: (_, value) => xmlAttributeValueProcessor(value)
-})
+const buildKeyElement = (attrs: Record<string, string>): string => {
+    // Builds <key attr="val" .../> without delegating to fast-xml-parser,
+    // which unconditionally escapes single quotes in attribute values in v5
+    // — breaking the JUCE port (single quote is a legal char in JUCE XML).
+    const attrStr = Object.entries(attrs)
+        .map(([k, v]) => `${k}="${escapeAttr(v)}"`)
+        .join(' ')
+    return `<key ${attrStr}/>`
+}
 
 export class JuceKeyFileUtils {
     static toString(date: Date): string {
@@ -79,17 +78,15 @@ export class JuceKeyFileUtils {
     ): string {
         // Ports juce::KeyFileUtils::createKeyFileContent
         // and juce::KeyFileUtils::encryptXML
-        const xml = {
-            key: {
-                '@_user': userName,
-                '@_email': userEmail,
-                [`@_${machineNumbersAttributeName}`]: machineNumbers,
-                '@_app': appName,
-                '@_date': date,
-                ...(expiryTime ? { '@_expiryTime': expiryTime } : {})
-            }
+        const attrs: Record<string, string> = {
+            user: userName,
+            email: userEmail,
+            [machineNumbersAttributeName]: machineNumbers,
+            app: appName,
+            date
         }
-        return [XML_DECLARATION, xmlBuilder.build(xml).trim()].join(' ')
+        if (expiryTime) attrs.expiryTime = expiryTime
+        return [XML_DECLARATION, buildKeyElement(attrs)].join(' ')
     }
 
     static createKeyFileComment(
