@@ -1,7 +1,7 @@
 import fc from 'fast-check'
-import { JuceBigInteger } from 'src/juce/JuceBigInteger'
 import { describe, expect, it } from 'vitest'
 
+import { JuceBigInteger } from '../juce/JuceBigInteger'
 import { execTestBin, hexArbitrary } from './test-utils'
 
 describe('JuceBigInteger', () => {

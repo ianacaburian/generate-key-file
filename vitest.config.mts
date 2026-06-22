@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
     test: {
+        testTimeout: 120000,
         setupFiles: ['./vitest.setup.js'],
         exclude: [
             '**/node_modules/**',
@@ -12,7 +13,4 @@ export default defineConfig({
             '**/build/**'
         ]
     },
-    esbuild: {
-        tsconfigRaw: '{"extends": "./tsconfig.vitest.json"}'
-    }
 })

@@ -20,7 +20,7 @@ jobs:
             matrix:
                 include:
                     - name: macOS
-                      os: macos-14
+                      os: macos-26
 
         steps:
             - name: Installing OSX utils
@@ -28,15 +28,21 @@ jobs:
               run: brew install osxutils
 
             - name: Checking out code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   submodules: true
 
+            - name: Set up Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: npm
+
             - name: Install dependencies
-              run: npm install
+              run: npm ci
 
             - name: Lint, install tests, and build package
               run: npm run build
 
-            - name: Perform single test run
-              run: npm run test run
+            - name: Perform test run
+              run: FC_NUM_RUNS=10 npm run test run

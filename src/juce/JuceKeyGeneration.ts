@@ -1,5 +1,4 @@
-import { GenerateExpiringKeyFileParams, GenerateKeyFileParams } from 'src/types'
-
+import { GenerateExpiringKeyFileParams, GenerateKeyFileParams } from '../types'
 import { JuceKeyFileUtils } from './JuceKeyFileUtils'
 import { JuceRSAKey } from './JuceRSAKey'
 
