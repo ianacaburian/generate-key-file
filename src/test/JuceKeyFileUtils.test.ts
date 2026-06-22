@@ -123,8 +123,7 @@ describe('JuceKeyFileUtils', () => {
                     created: JuceKeyFileUtils.toString(input.created)
                 })
                 latest = { input, result }
-                const parse =
-                    createKeyFileCommentParamsSchema.safeParse(input)
+                const parse = createKeyFileCommentParamsSchema.safeParse(input)
                 return !parse.success || result.fromUtil === result.fromJuce
             })
         )

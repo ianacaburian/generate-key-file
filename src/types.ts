@@ -41,9 +41,7 @@ export const generateKeyFileParamsSchema =
     createKeyFileCommentParamsSchema.extend({
         privateKey: rsaKeyComponentsSchema
     })
-export type GenerateKeyFileParams = z.infer<
-    typeof generateKeyFileParamsSchema
->
+export type GenerateKeyFileParams = z.infer<typeof generateKeyFileParamsSchema>
 
 export const generateExpiringKeyFileParamsSchema =
     generateKeyFileParamsSchema.extend({
