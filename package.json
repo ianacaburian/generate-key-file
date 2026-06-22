@@ -9,6 +9,9 @@
     "files": [
         "dist"
     ],
+    "engines": {
+        "node": ">=24"
+    },
     "scripts": {
         "clean": "rm -rf dist && npm run cm:clean",
         "lint": "eslint src",
