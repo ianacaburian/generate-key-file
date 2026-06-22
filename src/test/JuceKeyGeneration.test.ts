@@ -1,10 +1,10 @@
 import { inspect } from 'util'
 import fc from 'fast-check'
-import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
-import { JuceKeyGeneration } from 'src/juce/JuceKeyGeneration'
-import { GenerateExpiringKeyFileParams } from 'src/types'
 import { describe, expect, it } from 'vitest'
 
+import { JuceKeyFileUtils } from '../juce/JuceKeyFileUtils'
+import { JuceKeyGeneration } from '../juce/JuceKeyGeneration'
+import { GenerateExpiringKeyFileParams } from '../types'
 import { execTestBin } from './test-utils'
 
 describe('JuceKeyGeneration', () => {

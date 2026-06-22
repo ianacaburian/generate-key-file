@@ -1,14 +1,14 @@
 import fc from 'fast-check'
-import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
-import { JuceRSAKey } from 'src/juce/JuceRSAKey'
+import { describe, expect, it } from 'vitest'
+
+import { JuceKeyFileUtils } from '../juce/JuceKeyFileUtils'
+import { JuceRSAKey } from '../juce/JuceRSAKey'
 import {
     CreateKeyFileCommentParams,
     createKeyFileCommentParamsSchema,
     CreateKeyFileContentLineParams,
     createKeyFileContentLineParamsSchema
-} from 'src/types'
-import { describe, expect, it } from 'vitest'
-
+} from '../types'
 import { execTestBin, hexArbitrary } from './test-utils'
 
 describe('JuceKeyFileUtils', () => {

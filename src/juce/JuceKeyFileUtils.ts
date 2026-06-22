@@ -1,8 +1,7 @@
 import {
     CreateKeyFileCommentParams,
     CreateKeyFileContentLineParams
-} from 'src/types'
-
+} from '../types'
 import { JuceBigInteger } from './JuceBigInteger'
 import { JuceRSAKey } from './JuceRSAKey'
 
