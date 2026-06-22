@@ -1,6 +1,13 @@
+import { resolve } from 'path'
+
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            src: resolve(__dirname, 'src')
+        }
+    },
     test: {
         setupFiles: ['./vitest.setup.js'],
         exclude: [
@@ -12,7 +19,4 @@ export default defineConfig({
             '**/build/**'
         ]
     },
-    esbuild: {
-        tsconfigRaw: '{"extends": "./tsconfig.vitest.json"}'
-    }
 })
