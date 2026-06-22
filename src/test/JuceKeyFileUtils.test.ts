@@ -3,13 +3,11 @@ import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
 import { JuceRSAKey } from 'src/juce/JuceRSAKey'
 import {
     CreateKeyFileCommentParams,
-    createKeyFileCommentParamsValidator,
+    createKeyFileCommentParamsSchema,
     CreateKeyFileContentLineParams,
-    createKeyFileContentLineParamsValidator
+    createKeyFileContentLineParamsSchema
 } from 'src/types'
 import { describe, expect, it } from 'vitest'
-import { z } from 'zod'
-import { ZodFastCheck } from 'zod-fast-check'
 
 import { execTestBin, hexArbitrary } from './test-utils'
 
@@ -52,12 +50,18 @@ describe('JuceKeyFileUtils', () => {
         const baseResult = toResult(baseCase)
         console.log({ baseCase, baseResult })
         expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
-        const createKeyFileContentLineParamsArbitrary = ZodFastCheck().inputOf(
-            createKeyFileContentLineParamsValidator.extend({
-                date: z.date(),
-                expiryTime: z.date()
-            })
-        )
+        const createKeyFileContentLineParamsArbitrary = fc.record({
+            appName: fc.string({ minLength: 1 }),
+            userEmail: fc.emailAddress(),
+            userName: fc.string({ minLength: 1 }),
+            machineNumbers: fc.string({ minLength: 1 }),
+            machineNumbersAttributeName: fc.constantFrom(
+                'mach',
+                'expiring_mach'
+            ),
+            date: fc.date({ noInvalidDate: true }),
+            expiryTime: fc.date({ noInvalidDate: true })
+        })
         let latest
         fc.assert(
             fc.property(createKeyFileContentLineParamsArbitrary, input => {
@@ -67,7 +71,7 @@ describe('JuceKeyFileUtils', () => {
                 })
                 latest = { input, result }
                 const parse =
-                    createKeyFileContentLineParamsValidator.safeParse(input)
+                    createKeyFileContentLineParamsSchema.safeParse(input)
                 return !parse.success || result.fromUtil === result.fromJuce
             })
         )
@@ -104,11 +108,13 @@ describe('JuceKeyFileUtils', () => {
         const baseResult = toResult(baseCase)
         console.log({ baseCase, baseResult })
         expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
-        const createKeyFileCommentParamsArbitrary = ZodFastCheck().inputOf(
-            createKeyFileCommentParamsValidator.extend({
-                created: z.date()
-            })
-        )
+        const createKeyFileCommentParamsArbitrary = fc.record({
+            appName: fc.string({ minLength: 1 }),
+            userEmail: fc.emailAddress(),
+            userName: fc.string({ minLength: 1 }),
+            machineNumbers: fc.string({ minLength: 1 }),
+            created: fc.date({ noInvalidDate: true })
+        })
         let latest
         fc.assert(
             fc.property(createKeyFileCommentParamsArbitrary, input => {
@@ -118,7 +124,7 @@ describe('JuceKeyFileUtils', () => {
                 })
                 latest = { input, result }
                 const parse =
-                    createKeyFileCommentParamsValidator.safeParse(input)
+                    createKeyFileCommentParamsSchema.safeParse(input)
                 return !parse.success || result.fromUtil === result.fromJuce
             })
         )

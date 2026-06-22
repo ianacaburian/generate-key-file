@@ -4,8 +4,6 @@ import { JuceKeyFileUtils } from 'src/juce/JuceKeyFileUtils'
 import { JuceKeyGeneration } from 'src/juce/JuceKeyGeneration'
 import { GenerateExpiringKeyFileParams } from 'src/types'
 import { describe, expect, it } from 'vitest'
-import { z } from 'zod'
-import { ZodFastCheck } from 'zod-fast-check'
 
 import { execTestBin } from './test-utils'
 
@@ -165,14 +163,12 @@ describe('JuceKeyGeneration', () => {
         expect(baseResult.unlockEmail).toBe(baseEmail)
         expect(baseResult.isUnlocked).toBe('LOCKED')
         expect(baseResult.unlockExpiryTime).toBe(baseExpiryTime)
-        const arbitrary = ZodFastCheck()
-            .inputOf(
-                z.object({
-                    userEmail: z.string(),
-                    userName: z.string(),
-                    expiryTime: z.date()
-                })
-            )
+        const arbitrary = fc
+            .record({
+                userEmail: fc.string(),
+                userName: fc.string(),
+                expiryTime: fc.date({ noInvalidDate: true })
+            })
             .filter(
                 input =>
                     input.userEmail.length > 0 &&

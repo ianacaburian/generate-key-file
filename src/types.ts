@@ -2,54 +2,55 @@ import { z } from 'zod'
 
 import { JuceBigInteger } from './juce/JuceBigInteger'
 
-export const createKeyFileCommentParamsValidator = z.object({
+export const createKeyFileCommentParamsSchema = z.object({
     appName: z.string().min(1),
-    userEmail: z.string().min(1).email(),
+    userEmail: z.string().min(1),
     userName: z.string().min(1),
     machineNumbers: z.string().min(1)
 })
 export type CreateKeyFileCommentParams = z.infer<
-    typeof createKeyFileCommentParamsValidator
+    typeof createKeyFileCommentParamsSchema
 >
 
-export const machineNumbersAttributeNameValidator = z.enum([
+export const machineNumbersAttributeNameSchema = z.enum([
     'mach',
     'expiring_mach'
 ])
 export type MachineNumbersAttributeName = z.infer<
-    typeof machineNumbersAttributeNameValidator
+    typeof machineNumbersAttributeNameSchema
 >
 
-export const createKeyFileContentLineParamsValidator =
-    createKeyFileCommentParamsValidator.extend({
-        machineNumbersAttributeName: machineNumbersAttributeNameValidator
+export const createKeyFileContentLineParamsSchema =
+    createKeyFileCommentParamsSchema.extend({
+        machineNumbersAttributeName: machineNumbersAttributeNameSchema
     })
 export type CreateKeyFileContentLineParams = z.infer<
-    typeof createKeyFileContentLineParamsValidator
+    typeof createKeyFileContentLineParamsSchema
 >
 
-export const rsaKeyComponentsValidator = z.string().refine(
+export const rsaKeyComponentsSchema = z.stringFormat(
     // Ports juce::RSAKey::RSAKey() and juce::RSAKey::applyToValue()
+    'RSAKeyComponents',
     x =>
         x.includes(',') &&
         x.split(',').every(p => !JuceBigInteger.fromHex(p).isZero())
 )
-export type RSAKeyComponents = z.infer<typeof rsaKeyComponentsValidator>
+export type RSAKeyComponents = z.infer<typeof rsaKeyComponentsSchema>
 
-export const generateKeyFileParamsValidator =
-    createKeyFileCommentParamsValidator.extend({
-        privateKey: rsaKeyComponentsValidator
+export const generateKeyFileParamsSchema =
+    createKeyFileCommentParamsSchema.extend({
+        privateKey: rsaKeyComponentsSchema
     })
 export type GenerateKeyFileParams = z.infer<
-    typeof generateKeyFileParamsValidator
+    typeof generateKeyFileParamsSchema
 >
 
-export const generateExpiringKeyFileParamsValidator =
-    generateKeyFileParamsValidator.extend({
+export const generateExpiringKeyFileParamsSchema =
+    generateKeyFileParamsSchema.extend({
         expiryTime: z.date().min(new Date('1970-01-01T00:00:00.001Z'), {
-            message: 'Expiry time must be after 1970-01-01T00:00:00.000Z'
+            error: 'Expiry time must be after 1970-01-01T00:00:00.000Z'
         })
     })
 export type GenerateExpiringKeyFileParams = z.infer<
-    typeof generateExpiringKeyFileParamsValidator
+    typeof generateExpiringKeyFileParamsSchema
 >
