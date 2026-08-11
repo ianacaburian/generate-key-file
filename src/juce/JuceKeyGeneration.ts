@@ -1,4 +1,8 @@
-import { GenerateExpiringKeyFileParams, GenerateKeyFileParams } from '../types'
+import {
+    GenerateCustomKeyFileParams,
+    GenerateExpiringKeyFileParams,
+    GenerateKeyFileParams
+} from '../types'
 import { JuceKeyFileUtils } from './JuceKeyFileUtils'
 import { JuceRSAKey } from './JuceRSAKey'
 
@@ -60,6 +64,18 @@ export class JuceKeyGeneration {
         )
         return JuceKeyFileUtils.createKeyFile(
             comment,
+            xml,
+            new JuceRSAKey(params.privateKey)
+        )
+    }
+
+    static generateCustomKeyFile(params: GenerateCustomKeyFileParams) {
+        const xml = JuceKeyFileUtils.createCustomKeyFileContentLine(
+            params.rootTag,
+            params.attributes
+        )
+        return JuceKeyFileUtils.createKeyFile(
+            params.comment,
             xml,
             new JuceRSAKey(params.privateKey)
         )

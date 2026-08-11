@@ -52,3 +52,19 @@ export const generateExpiringKeyFileParamsSchema =
 export type GenerateExpiringKeyFileParams = z.infer<
     typeof generateExpiringKeyFileParamsSchema
 >
+
+export const generateCustomKeyFileParamsSchema = z.object({
+    rootTag: z.string().min(1),
+    attributes: z.record(z.string().min(1), z.string().min(1)),
+    comment: z.string().min(1),
+    privateKey: rsaKeyComponentsSchema
+})
+export type GenerateCustomKeyFileParams = z.infer<
+    typeof generateCustomKeyFileParamsSchema
+>
+
+export const decryptBytesParamsSchema = z.object({
+    hexValue: z.string().regex(/^[0-9a-fA-F]+$/),
+    key: rsaKeyComponentsSchema
+})
+export type DecryptBytesParams = z.infer<typeof decryptBytesParamsSchema>
