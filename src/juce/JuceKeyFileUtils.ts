@@ -31,14 +31,14 @@ const escapeAttr = (value: string): string =>
     // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
     value.split('').map(xmlAttributeCharProcessor).join('')
 
-const buildKeyElement = (attrs: Record<string, string>): string => {
-    // Builds <key attr="val" .../> without delegating to fast-xml-parser,
+const buildElement = (tag: string, attrs: Record<string, string>): string => {
+    // Builds <tag attr="val" .../> without delegating to fast-xml-parser,
     // which unconditionally escapes single quotes in attribute values in v5
     // — breaking the JUCE port (single quote is a legal char in JUCE XML).
     const attrStr = Object.entries(attrs)
         .map(([k, v]) => `${k}="${escapeAttr(v)}"`)
         .join(' ')
-    return `<key ${attrStr}/>`
+    return `<${tag} ${attrStr}/>`
 }
 
 export class JuceKeyFileUtils {
@@ -85,7 +85,17 @@ export class JuceKeyFileUtils {
             date
         }
         if (expiryTime) attrs.expiryTime = expiryTime
-        return [XML_DECLARATION, buildKeyElement(attrs)].join(' ')
+        return [XML_DECLARATION, buildElement('key', attrs)].join(' ')
+    }
+
+    static createCustomKeyFileContentLine(
+        rootTag: string,
+        attributes: Record<string, string>
+    ): string {
+        // The generic sibling of createKeyFileContentLine: same declaration,
+        // same single-space join, same JUCE escaping - only the tag and the
+        // attribute set are the caller's.
+        return [XML_DECLARATION, buildElement(rootTag, attributes)].join(' ')
     }
 
     static createKeyFileComment(
@@ -114,6 +124,15 @@ export class JuceKeyFileUtils {
         const val = JuceBigInteger.fromUTF8MemoryBlock(xmlLine)
         privateKey.applyToValue(val)
         return val.toHex()
+    }
+
+    static decryptHexToMemoryBlock(hex: string, key: JuceRSAKey): Buffer {
+        // Ports the decrypt half of juce::KeyFileUtils::getXmlFromKeyFile:
+        // applyToValue is its own inverse under the paired key, so this
+        // recovers whatever bytes the other side loaded and applied.
+        const val = JuceBigInteger.fromHex(hex)
+        key.applyToValue(val)
+        return val.toMemoryBlock()
     }
 
     static createKeyFile(

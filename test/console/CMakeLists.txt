@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.30.3)
 include(cmake/ConfigTarget.cmake)
 include(cmake/CPM.cmake)
+project(console VERSION 0.0.1)
 CPMAddPackage(juce
     NAME juce
-    GIT_TAG 8.0.14
+    GIT_TAG 9.0.1
     GITHUB_REPOSITORY juce-framework/juce
     SYSTEM YES
     EXCLUDE_FROM_ALL YES
 )
-project(console VERSION 0.0.1)
 
 # create-key-file-content-line
 set(TARGET_CREATE_LINE console_create_key_file_content_line)

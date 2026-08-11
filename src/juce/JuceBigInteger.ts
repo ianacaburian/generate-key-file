@@ -30,6 +30,20 @@ export class JuceBigInteger {
         return b
     }
 
+    toMemoryBlock(): Buffer {
+        // Ports juce::BigInteger::toMemoryBlock() - bytes least-significant
+        // first, the inverse of fromUTF8MemoryBlock(). High-order zero bytes
+        // do not survive the round trip; callers restoring fixed-width binary
+        // must right-pad the result themselves.
+        const bytes: number[] = []
+        let v = this.value
+        while (v > 0n) {
+            bytes.push(Number(v & 0xffn))
+            v >>= 8n
+        }
+        return Buffer.from(bytes)
+    }
+
     isZero(): boolean {
         return this.value === 0n
     }
