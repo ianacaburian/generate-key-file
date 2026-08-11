@@ -12,8 +12,11 @@ const legalXmlCharRegex =
     /^[a-zA-Z0-9 .,;:\-()_+=?!$#@[\]/|*%~{}'\\]$/
 
 const xmlAttributeCharProcessor = (char: string): string =>
-    // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
-    char.length !== 1
+    // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars(), which walks
+    // whole code points (getAndAdvance) and emits one numeric entity per
+    // astral character - so iteration here must be by code point, never by
+    // UTF-16 unit.
+    char.length === 0
         ? ''
         : legalXmlCharRegex.test(char)
           ? char
@@ -25,11 +28,11 @@ const xmlAttributeCharProcessor = (char: string): string =>
                 ? '&gt;'
                 : char === '<'
                   ? '&lt;'
-                  : `&#${char.charCodeAt(0)};`
+                  : `&#${char.codePointAt(0) ?? 0};`
 
 const escapeAttr = (value: string): string =>
     // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
-    value.split('').map(xmlAttributeCharProcessor).join('')
+    [...value].map(xmlAttributeCharProcessor).join('')
 
 const buildElement = (tag: string, attrs: Record<string, string>): string => {
     // Builds <tag attr="val" .../> without delegating to fast-xml-parser,

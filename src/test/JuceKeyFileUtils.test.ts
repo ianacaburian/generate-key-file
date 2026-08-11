@@ -78,6 +78,77 @@ describe('JuceKeyFileUtils', () => {
         console.log(latest)
     })
 
+    it('createKeyFileContentLine escapes astral characters like juce', ctx => {
+        console.log(`Testing ${ctx.task.name}...`)
+        type TestParams = CreateKeyFileContentLineParams & {
+            date: string
+        }
+        const toResult = (params: TestParams) => {
+            return {
+                fromJuce: execTestBin(
+                    'create-key-file-content-line',
+                    JSON.stringify({ ...params })
+                ),
+                fromUtil: JuceKeyFileUtils.createKeyFileContentLine(
+                    {
+                        appName: params.appName,
+                        userEmail: params.userEmail,
+                        userName: params.userName,
+                        machineNumbers: params.machineNumbers,
+                        machineNumbersAttributeName:
+                            params.machineNumbersAttributeName
+                    },
+                    params.date
+                )
+            }
+        }
+        // Regression base case: juce escapes whole code points, one numeric
+        // entity per astral character. A port iterating UTF-16 units emits
+        // two lone-surrogate entities instead and diverges here.
+        const baseCase = {
+            appName: '\u{1F60A}',
+            userEmail: 'a@a.a',
+            userName: '\u{1F60A}x\u{10348}',
+            machineNumbers: '\u{2603}',
+            machineNumbersAttributeName: 'mach' as const,
+            date: JuceKeyFileUtils.toHexStringMilliseconds(
+                new Date('1970-01-01T00:00:00.000Z')
+            )
+        }
+        const baseResult = toResult(baseCase)
+        console.log({ baseCase, baseResult })
+        expect(baseResult.fromUtil).toBe(baseResult.fromJuce)
+        const astralStringArbitrary = fc.string({
+            unit: 'grapheme',
+            minLength: 1
+        })
+        const astralParamsArbitrary = fc.record({
+            appName: astralStringArbitrary,
+            userEmail: fc.emailAddress(),
+            userName: astralStringArbitrary,
+            machineNumbers: astralStringArbitrary,
+            machineNumbersAttributeName: fc.constantFrom(
+                'mach',
+                'expiring_mach'
+            ),
+            date: fc.date({ noInvalidDate: true })
+        })
+        let latest
+        fc.assert(
+            fc.property(astralParamsArbitrary, input => {
+                const result = toResult({
+                    ...input,
+                    date: JuceKeyFileUtils.toHexStringMilliseconds(input.date)
+                })
+                latest = { input, result }
+                const parse =
+                    createKeyFileContentLineParamsSchema.safeParse(input)
+                return !parse.success || result.fromUtil === result.fromJuce
+            })
+        )
+        console.log(latest)
+    })
+
     it('createKeyFileComment', ctx => {
         console.log(`Testing ${ctx.task.name}...`)
         type TestParams = CreateKeyFileCommentParams & {
