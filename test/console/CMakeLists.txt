@@ -103,3 +103,21 @@ target_link_libraries(${TARGET_APPLY_KEY_FILE}
 set_target_properties(${TARGET_APPLY_KEY_FILE}
     PROPERTIES OUTPUT_NAME "apply-key-file"
 )
+
+# escape-xml-text
+set(TARGET_ESCAPE_XML_TEXT console_escape_xml_text)
+console_config_target(${TARGET_ESCAPE_XML_TEXT})
+target_sources(${TARGET_ESCAPE_XML_TEXT} PRIVATE src/escapeXmlText.cpp)
+target_link_libraries(${TARGET_ESCAPE_XML_TEXT} PRIVATE juce::juce_core)
+set_target_properties(${TARGET_ESCAPE_XML_TEXT}
+    PROPERTIES OUTPUT_NAME "escape-xml-text"
+)
+
+# unescape-xml-text
+set(TARGET_UNESCAPE_XML_TEXT console_unescape_xml_text)
+console_config_target(${TARGET_UNESCAPE_XML_TEXT})
+target_sources(${TARGET_UNESCAPE_XML_TEXT} PRIVATE src/unescapeXmlText.cpp)
+target_link_libraries(${TARGET_UNESCAPE_XML_TEXT} PRIVATE juce::juce_core)
+set_target_properties(${TARGET_UNESCAPE_XML_TEXT}
+    PROPERTIES OUTPUT_NAME "unescape-xml-text"
+)
