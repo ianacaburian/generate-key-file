@@ -68,3 +68,15 @@ export const decryptBytesParamsSchema = z.object({
     key: rsaKeyComponentsSchema
 })
 export type DecryptBytesParams = z.infer<typeof decryptBytesParamsSchema>
+
+export const xmlStringSchema = z.string()
+
+export const buildXmlTextElementParamsSchema = z.object({
+    // The tag matches generateCustomKeyFileParamsSchema's rootTag rather than
+    // juce::isValidXmlName, which juce only asserts on in a debug build.
+    tag: z.string().min(1),
+    text: z.string()
+})
+export type BuildXmlTextElementParams = z.infer<
+    typeof buildXmlTextElementParamsSchema
+>

@@ -4,45 +4,9 @@ import {
 } from '../types'
 import { JuceBigInteger } from './JuceBigInteger'
 import { JuceRSAKey } from './JuceRSAKey'
+import { buildElement } from './JuceXml'
 
 const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>'
-
-const legalXmlCharRegex =
-    // Ports juce::XmlOutputFunctions::LegalCharLookupTable
-    /^[a-zA-Z0-9 .,;:\-()_+=?!$#@[\]/|*%~{}'\\]$/
-
-const xmlAttributeCharProcessor = (char: string): string =>
-    // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars(), which walks
-    // whole code points (getAndAdvance) and emits one numeric entity per
-    // astral character - so iteration here must be by code point, never by
-    // UTF-16 unit.
-    char.length === 0
-        ? ''
-        : legalXmlCharRegex.test(char)
-          ? char
-          : char === '&'
-            ? '&amp;'
-            : char === '"'
-              ? '&quot;'
-              : char === '>'
-                ? '&gt;'
-                : char === '<'
-                  ? '&lt;'
-                  : `&#${char.codePointAt(0) ?? 0};`
-
-const escapeAttr = (value: string): string =>
-    // Ports juce::XmlOutputFunctions::escapeIllegalXMLChars()
-    [...value].map(xmlAttributeCharProcessor).join('')
-
-const buildElement = (tag: string, attrs: Record<string, string>): string => {
-    // Builds <tag attr="val" .../> without delegating to fast-xml-parser,
-    // which unconditionally escapes single quotes in attribute values in v5
-    // — breaking the JUCE port (single quote is a legal char in JUCE XML).
-    const attrStr = Object.entries(attrs)
-        .map(([k, v]) => `${k}="${escapeAttr(v)}"`)
-        .join(' ')
-    return `<${tag} ${attrStr}/>`
-}
 
 export class JuceKeyFileUtils {
     static toString(date: Date): string {
