@@ -1,0 +1,60 @@
+name: publish
+
+on:
+    push:
+        tags: ['v*']
+
+permissions:
+    contents: read
+    # Mints the OIDC token npm exchanges for a publish grant, in place of a stored token.
+    id-token: write
+
+env:
+    HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+jobs:
+    build_test_publish:
+        name: macOS
+        runs-on: macos-26
+        defaults:
+            run:
+                shell: bash
+
+        steps:
+            - name: Installing OSX utils
+              run: brew install osxutils
+
+            - name: Checking out code
+              uses: actions/checkout@v5
+
+            - name: Set up Node
+              uses: actions/setup-node@v5
+              with:
+                  node-version: 24
+                  cache: npm
+                  registry-url: 'https://registry.npmjs.org'
+
+            - name: Checking the tag against the package version
+              run: |
+                  tag="${GITHUB_REF_NAME#v}"
+                  pkg="$(npm pkg get version | tr -d '"')"
+                  if [ "$tag" != "$pkg" ]; then
+                      echo "Tag ${GITHUB_REF_NAME} carries version ${tag}, package.json carries ${pkg}."
+                      exit 1
+                  fi
+
+            - name: Updating npm
+              # Trusted publishing needs npm 11.5.1 or newer.
+              run: npm install -g npm@latest
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Lint, install tests, and build package
+              run: npm run build
+
+            - name: Perform test run
+              run: FC_NUM_RUNS=10 npm run test run
+
+            - name: Publishing to npm
+              run: npm publish

@@ -138,3 +138,19 @@ FC_NUM_RUNS=1000 npm run test   # Run each fc test 1000 times.
 ```
 FC_SEED=2 npm run test   # Run each fc test with seed=2.
 ```
+
+### Publishing
+
+Publishing is triggered by a tag, and nothing else. Bump `version` in
+`package.json`, land it on `master`, then create a GitHub release tagged
+`vX.Y.Z`. The tag push starts `.github/workflows/publish.yml`, which lints,
+builds the test binaries, runs the suite, and publishes to npm.
+
+-   The tag must match `version` in `package.json` exactly, minus the leading
+    `v`. The workflow checks this before it builds, so a mismatched tag fails
+    in seconds rather than after the JUCE build.
+-   `publish.yml` must exist on the tagged commit. A tag push runs the workflow
+    as it stands at that ref, not as it stands on `master`.
+-   No npm token is involved anywhere. The workflow publishes over OIDC using
+    npm trusted publishing, which also attaches a provenance attestation to the
+    release.
